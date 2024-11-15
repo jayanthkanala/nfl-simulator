@@ -1,27 +1,74 @@
+/* General Styles */
 body {
     font-family: sans-serif;
+    background-color: beige;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 h1, h2, h3, h4, h5, h6 {
     color: rgb(251, 83, 83);
+    text-align: center;
 }
 
-.dropdown-container {
+.dropdown-container, .input-container, .submit-button-container {
     display: flex;
     align-items: center;
     gap: 1em;
     justify-content: center;
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .centre-cl {
     text-align: center;
 }
 
-.dropdown-class {
+.dropdown-class, .input-class {
     width: 15em;
-    
 }
 
 .label-class {
     margin-right: 0.5em;
+}
+
+.submit-button {
+    padding: 15px 20px;
+    margin: 20px;
+    font-size: 1em;
+}
+
+.main-class {
+    padding: 5px;
+    margin: 5px;
+}
+
+.input-class {
+    width: 25%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .dropdown-class, .input-class {
+        width: 100%;
+    }
+    .dropdown-container, .input-container, .submit-button-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+    }
+    .submit-button {
+        width: 100%;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .dropdown-class, .input-class, .submit-button {
+        font-size: 0.9em;
+    }
+    .submit-button {
+        padding: 12px 15px;
+    }
 }

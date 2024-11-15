@@ -40,14 +40,17 @@ app.layout = html.Div([
     html.Div([
         html.Label('Select Number of Games:', className='label-class'),
         dcc.Input(id='num-games', type='number', min=1, max=100, placeholder="Enter number between 1-100", className='input-class')
-    ], className='input-container'),
+    ], className='input-container dropdown-container'),
 
     # Submit Button
-    html.Button('Submit', id='submit-button', n_clicks=0, className='submit-button'),
+    html.Div([
+        html.Button('Submit', id='submit-button', n_clicks=0),
+    ], className='dropdown-container submit-button'),
+    # html.Button('Submit', id='submit-button', n_clicks=0, className='submit-button'),
 
     # Output Section
     html.Div(id='output', className='output-container')
-])
+], className='main-class')
 
 # Callback for validation and output display
 @app.callback(
