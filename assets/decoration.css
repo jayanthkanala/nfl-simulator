@@ -1,0 +1,27 @@
+body {
+    font-family: sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: rgb(251, 83, 83);
+}
+
+.dropdown-container {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    justify-content: center;
+}
+
+.centre-cl {
+    text-align: center;
+}
+
+.dropdown-class {
+    width: 15em;
+    
+}
+
+.label-class {
+    margin-right: 0.5em;
+}
