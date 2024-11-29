@@ -1,100 +1,62 @@
-
-
-
-
-def possession(gameVar, result):
-
-def fieldGoalChance():
-
-def kickOff():
-
-def pickPlay():
-
-def playCompletion(play,):
-
-def defendChance(play,):
-
-def makePlay(play, ):
+from classes import GameVar, Team
+from plays import Play, PassPlay, RushPlay, KickOff, FieldGoal
+endZone = 100
 
 def main():
-    quarter = 1
-    down = 1
-    time = 0
-    currentPosition = 0
-    firstDownLine = 10
-    endZone = 100
+    global endZone
+    offenseTeam, defenseTeam = coinToss(homeTeam, awayTeam)
+    var = GameVar(offenseTeam, defenseTeam)
 
-    homeTeam = 'x'
-    homeScore = 0
-    awayTeam = 'y'
-    awayScore = 0
+    while var.get_quarter() <= 4:
+        while var.get_clock <= float(15*60) #time in seconds:
+            if var.get_switch_sides() == True:
+                teamToSwitch = var.get_offense()
+                var.set_offense(var.get_defense())
+                var.set_defense(teamToSwitch)
+                var.set_switch_sides(False)
 
-    score = (homeScore, awayScore)
-
-    gameVar = {
-        'quarter' : 1,
-        'down' : 1,
-        'time' : 0,
-        'currentPosition' : 0,
-        'firstDownLine' : 10,
-        'offense': homeTeam,
-        'defense': awayTeam,
-        'switchSides': False
-    }
-
-    result = { 
-            'score': 0,
-            'yards': 0,
-            'timeElapsed':0,
-            'fieldGoal': False,
-            'touchDown': False}
-    
-    while quarter <= 4:
-        while time <= 15*60:
-            if gameVar['switchSides'] == True:
-                teamToSwitch = gameVar['offense']
-                gameVar['offense'] = gameVar['defense']
-                gameVar['defense'] = teamToSwitch
-
-            if currentPosition == 'FieldGoal':
-                play = fieldGoalChance(gameVar['offense'])
-            elif currentPosition == 'KickOff':
-                play = kickOff(gameVar['defense'])
+            if var.get_position() == 'FieldGoal':
+                play = FieldGoal()
+            elif var.get_position() == 'KickOff':
+                play = KickOff()
             else:
-                play = pickPlay(gameVar['offense'], quarter, down, time, offenseScore, 
-                            gameVar['offense'], currentPosition, firstDownLine, result)
-            
-            offenseChance = playCompletion(gameVar['offense'], play)
-            defenseChance = defendChance(gameVar['defense'], play)
+                play = RushPlay()
+                play = PassPlay()
 
-            result = makePlay(play, offenseChance, defenseChance)
+            offenseChance = playCompletion(gameVar['offense'], play) #Maybe these should be team class members?
+            defenseChance = defendChance(gameVar['defense'], play) #Maybe these should be team class members?
 
-            if currentPosition+result['yards']>+ endZone:
-                offenseScore =+ result['score']
-                fieldGoal = True
-                currentPosition = 'FieldGoal'
-                time =+ result['timeElapsed']
-                gameVar['switchSides'] = True
+            result = play.makePlay(offenseChance, defenseChance)
+
+            if var.get_position()+play.get_yards()>+ endZone:
+                var.add_Score(play.get__score)
+                var.set_field_goal(True)
+                var.set_position = 'FieldGoal'
+                var.add_clock(play.get_time_elapsed())
             
             elif result['fieldGoal'] == True:
-                offenseScore =+ result['score']
-                currentPosition = 'KickOff'
-                time =+ result['timeElapsed']
+                var.add_Score(play.get__score)
+                var.set_field_goal(False)
+                var.set_position = 'KickOff'
+                var.add_clock(play.get_time_elapsed())
+                var.set_switch_sides(True)
             
-            elif currentPosition+result['yards'] >= firstDownLine:
-                down = 1
-                currentPosition += result['yards']
-                firstDownLine += currentPosition +10
-                time =+ result['timeElapsed']
-            elif down == 4 and currentPosition+result < endZone:
-                gameVar['switchSides'] = True
+            elif var.get_position()+play.get_yards() >= var.get_first_down():
+                var.set_down(1)
+                var.add_position(play.get_yards())
+                var.set_first_down(var.get_position+10)
+                var.add_clock(play.get_time_elapsed())
+
+            elif var.get_down() == 4:
+                var.set_down(1)
+                var.set_switch_sides(True)
 
             else:
-                down =+ 1
-                time =+ result['timeElapsed']
-                currentPosition =+ result['yards']
+                var.add_down()
+                var.add_position(play.get_yards())
+                var.add_clock(play.get_time_elapsed())
             
-elif __name__ == '__main__':
+if __name__ == '__main__':
     main()
         
 
