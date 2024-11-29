@@ -1,50 +1,64 @@
 from classes import GameVar, Team
 from plays import Play, PassPlay, RushPlay, KickOff, FieldGoal
+import random
 endZone = 100
 
 def main():
     global endZone
-    offenseTeam, defenseTeam = coinToss(homeTeam, awayTeam)
-    var = GameVar(offenseTeam, defenseTeam)
+    #These will be input from the GUI Jayanth is making
+    homeTeam = 'x'
+    awayTeam = 'y'
+    #Coin Toll
+    if random.random(0, 1) >= 0.50:
+        var = GameVar(homeTeam, awayTeam)
+    else:
+        var = GameVar(awayTeam, homeTeam)
 
     while var.get_quarter() <= 4:
-        while var.get_clock <= float(15*60) #time in seconds:
+        while var.get_clock <= float(15*60): #time in seconds
+            #Check if sides need to be switched
             if var.get_switch_sides() == True:
                 teamToSwitch = var.get_offense()
                 var.set_offense(var.get_defense())
                 var.set_defense(teamToSwitch)
                 var.set_switch_sides(False)
 
-            if var.get_position() == 'FieldGoal':
+            #Check what type of play needs to be made using
+            if var.get_field_goal() == True:
                 play = FieldGoal()
-            elif var.get_position() == 'KickOff':
+            elif var.get_kick_off() == True:
                 play = KickOff()
             else:
                 play = RushPlay()
                 play = PassPlay()
 
-            offenseChance = playCompletion(gameVar['offense'], play) #Maybe these should be team class members?
-            defenseChance = defendChance(gameVar['defense'], play) #Maybe these should be team class members?
-
-            result = play.makePlay(offenseChance, defenseChance)
-
-            if var.get_position()+play.get_yards()>+ endZone:
-                var.add_Score(play.get__score)
-                var.set_field_goal(True)
-                var.set_position = 'FieldGoal'
-                var.add_clock(play.get_time_elapsed())
+            #Some way to calculate chances of each sides success for the play
+            #Maybe it should instead calculate a chance of success for offense
+            #Then determine a range of yards given success
+            successChance, yardRange = calculateSuccess(play)
+            play.set_success_chance(successChance)
+            play.set_yardRange(yardRange)
+            result=play.makePlay()
             
-            elif result['fieldGoal'] == True:
-                var.add_Score(play.get__score)
+
+            if var.get_position()+result['yards']>+ endZone:
+                var.add_Score(6)
+                var.set_field_goal(True)
+                var.add_clock(play.get_time_elapsed())
+
+            elif var.get_field_goal == True:
+                #If it was a succesful fieldgoal, add 1 to the offense teams score
+                if result['success'] == True:
+                    var.add_Score(1)
+                #Reset fieldgoal flag, add time elapsed during play, and flip on switch sides flag
                 var.set_field_goal(False)
-                var.set_position = 'KickOff'
                 var.add_clock(play.get_time_elapsed())
                 var.set_switch_sides(True)
             
             elif var.get_position()+play.get_yards() >= var.get_first_down():
                 var.set_down(1)
-                var.add_position(play.get_yards())
                 var.set_first_down(var.get_position+10)
+                var.add_position(play.get_yards())
                 var.add_clock(play.get_time_elapsed())
 
             elif var.get_down() == 4:

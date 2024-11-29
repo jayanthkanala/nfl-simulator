@@ -1,20 +1,17 @@
 import numpy as np
+import random
 
 class Play:
     def __init__(self, name):
         self._name = None  
-        self._offenseChance = 0
-        self._defenseChance = 0
+        self._successChance = 0
+        self._yardRange = [0, 0]
         self._result = { 
-            'score': 0,
+            'success': False,
             'yards': 0,
             'timeElapsed':0}
         
     
-    def makePlay(self, offenseChance, defenseChance):
-        matrix = [[offenseChance*defenseChance, (1-offenseChance)*defenseChance], 
-                  [(1-defenseChance)*offenseChance, (1-defenseChance)*(1-offenseChance)]]
-
     # Getter and Setter for name
     def get_name(self):
         return self._name
@@ -23,36 +20,30 @@ class Play:
         self._name = value
 
     # Getter and Setter for offenseChance
-    def get_offense_chance(self):
-        return self._offenseChance
+    def get_success_chance(self):
+        return self._successChance
 
-    def set_offense_chance(self, value):
-        self._offenseChance = value
+    def set_success_chance(self, value):
+        self._successChance = value
 
     # Getter and Setter for defenseChance
-    def get_defense_chance(self):
-        return self._defenseChance
+    def get_yardRange(self):
+        return self._yardRange
 
-    def set_defense_chance(self, value):
-        self._defenseChance = value
+    def set_yardRange(self, value):
+        self._yardRange = value
 
     # Getter and Setter for the entire result dictionary
     def get_result(self):
         return self._result
 
-    def set_result(self, score=0 , yards=0, timeElapsed=0):
+    def set_result(self, success=False,yards=0, timeElapsed=0):
         self._result = { 
-            'score': score,
+            'success': success,
             'yards': yards,
             'timeElapsed':timeElapsed}
 
     # Individual Getters and Setters for result keys
-    def get__score(self):
-        return self._result['score']
-
-    def set_score(self, value):
-        self._result['score'] = value
-
     def get_yards(self):
         return self._result['yards']
 
@@ -64,6 +55,19 @@ class Play:
 
     def set_time_elapsed(self, value):
         self._result['timeElapsed'] = value
+
+    def makePlay(self):
+        #Checks if play is a failure
+        if random.random(0, 1) > self._successChance: 
+            self.set_result(False, 0, 10) #Use a default of 10 seconds for failed play for now
+        #If it didn't fail, it must have succeeded
+        else:
+            yards = random.random(self._yardRange[0], self._yardRange[1])
+            time = somewaytocalculateTime()
+            self.set_result(True, yards, 5+time)
+        return self._result
+
+
 
 class PassPlay(Play):
     def __init__(self):
