@@ -1,7 +1,7 @@
 /* General Styles */
 body {
     font-family: sans-serif;
-    background-color: beige;
+    background-color: rgb(95, 169, 198);
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -79,6 +79,24 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     padding: 20px; /* Spacing inside the card */
     margin: 10px; /* Spacing outside the card */
+    /* max-width: 300px; */
     font-family: Arial, sans-serif; /* Font style */
 }
 
+/* Logo Container */
+.logo-container {
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-container img {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #fff;
+}

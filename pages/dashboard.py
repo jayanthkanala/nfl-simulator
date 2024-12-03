@@ -9,6 +9,7 @@ register_page(__name__, path="/")
 # Fetch data for dropdowns
 weather_conditions = ['Sunny', 'Rainy', 'Snowy', 'Cloudy']
 teams = nfl.import_team_desc()['team_name'].tolist()
+logos= nfl.import_team_desc()['team_logo_squared'].tolist()
 current_year = datetime.datetime.now().year
 year_range = range(1999, current_year + 1)
 
@@ -38,6 +39,8 @@ layout = html.Div([
             className='dropdown-class',
         ),
     ], className='dropdown-container'),
+      # Logos for selected teams
+    html.Div(id='logos-container', className='logo-container'),
 
     # Location Selection
     html.Div([
@@ -77,7 +80,7 @@ layout = html.Div([
 
     # Submit Button
     html.Div([
-        html.Button('Submit', id='submit-button', n_clicks=0),
+        html.Button('Compare', id='submit-button', n_clicks=0),
     ], className='dropdown-container submit-button'),
 
     # Output Section
@@ -116,3 +119,47 @@ def update_output(n_clicks, home_team, away_team, year, weather, num_games, team
                 f"Team B: {away_team}, Location: {team_b_loc}\n"
                 f"Year: {year}, Weather: {weather}, Games: {num_games}")
     return ""
+# @callback(
+#     [Output('team-a-logo', 'src'), Output('team-b-logo', 'src')],
+#     [Input('home_team', 'value'), Input('away_team', 'value')]
+# )
+@callback(
+    Output('logos-container', 'children'),
+    [Input('home_team', 'value'), Input('away_team', 'value')]
+)
+# TO FETCH SELECTED TEAMS LOGOS:
+# def update_logos(home_team, away_team):
+#     """Fetches the home team's and away team's logo after selecting each."""
+#     # Find the index of the selected teams in the teams list
+#     team_a_index = teams.index(home_team) if home_team in teams else None
+#     team_b_index = teams.index(away_team) if away_team in teams else None
+
+#     # Get the corresponding logos
+#     team_a_logo = logos[team_a_index] if team_a_index is not None else ""
+#     team_b_logo = logos[team_b_index] if team_b_index is not None else ""
+    
+#     return team_a_logo, team_b_logo
+def update_logos(home_team, away_team):
+    """Conditionally renders the logos for the selected teams and adds 'Vs' between them."""
+    children = []
+
+    # Add Team A's logo if selected
+    if home_team:
+        team_a_index = teams.index(home_team) if home_team in teams else None
+        team_a_logo = logos[team_a_index] if team_a_index is not None else ""
+        if team_a_logo:
+            children.append(html.Img(src=team_a_logo, height='100px', style={'margin-right': '10px'}))
+
+    # Add 'Vs' text between logos if both teams are selected
+    if home_team and away_team:
+        children.append(html.Div(" Vs ", style={'font-size': '24px', 'margin': '0 10px', 'font-weight': 'bold'}))
+
+    # Add Team B's logo if selected
+    if away_team:
+        team_b_index = teams.index(away_team) if away_team in teams else None
+        team_b_logo = logos[team_b_index] if team_b_index is not None else ""
+        if team_b_logo:
+            children.append(html.Img(src=team_b_logo, height='100px'))
+
+    # Return the children to display the logos with "Vs" in between
+    return children
