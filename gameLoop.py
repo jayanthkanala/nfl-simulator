@@ -74,8 +74,9 @@ def main():
                 var.add_down()
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
+            playByplay.append(play)
         #Add code to add play results to playbyplay
-    #return playByplay
+    return var.get_homeScore, var.get_awayScore, playByplay
             
 if __name__ == '__main__':
 
