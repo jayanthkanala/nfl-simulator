@@ -46,6 +46,11 @@ def main():
                 var.set_field_goal(True)
                 var.add_clock(result['timeElapsed'])
 
+            if var.get_kick_off == True:
+                var.add_position(result['yards'])
+                var.add_clock(result['timeElapsed'])
+                var.set_kick_off == False
+
             elif var.get_field_goal == True:
                 #If it was a succesful fieldgoal, add 1 to the offense teams score
                 if play.getSuccess() == True:
@@ -70,7 +75,7 @@ def main():
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
         #Add code to add play results to playbyplay
-    return playByplay
+    #return playByplay
             
 if __name__ == '__main__':
 

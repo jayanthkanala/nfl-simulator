@@ -55,7 +55,7 @@ class Team:
         average_time = count / total
         return average_time
 
-    def average_yards(self, play_type, offdef = 'offteam'):
+    def average_yards(self, play_type, offdef = 'posteam'):
         team = self._name
         type_df = nfls[(nfls[play_type] == 1) & (nfls[offdef] == team)]
         total = 0
@@ -107,20 +107,25 @@ class Team:
     
     def average_off_def(self, offense, defense, play_type, funcname): #Averages offense with defense based on play_type and function name
         if funcname == 'average_yards':
-            off_mean, off_sd = offense.funcname(team = offense, play_type = play_type, offdef = "posteam")[0] #Use 0 index in case of multiple returns in function
-            def_mean, def_sd = defense.funcname(team = defense, play_type = play_type, offdef = "defteam")[0]
+            off_mean, off_sd = offense.average_yards(team = offense, play_type = play_type, offdef = "posteam")[0] #Use 0 index in case of multiple returns in function
+            def_mean, def_sd = defense.average_yards(team = defense, play_type = play_type, offdef = "defteam")[0]
             avg_yards = (off_mean + def_mean) / 2
             avg_sd = (off_sd + def_sd) / 2
             return avg_yards, avg_sd
-        else:
-            off_mean = offense.funcname(team = offense, play_type = play_type, offdef = "posteam")
-            def_mean = offense.funcname(team = defense, play_type = play_type, offdef = "defteam")
+        elif funcname == 'completion_percentage':
+            off_mean = offense.completion_percentage(team = offense, play_type = play_type, offdef = "posteam")
+            def_mean = offense.completion_percentage(team = defense, play_type = play_type, offdef = "defteam")
+            avg = (off_mean + def_mean) / 2
+            return avg
+        elif funcname == 'play_percent':
+            off_mean = offense.play_percent(team = offense, play_type = play_type, offdef = "posteam")
+            def_mean = offense.play_percent(team = defense, play_type = play_type, offdef = "defteam")
             avg = (off_mean + def_mean) / 2
             return avg
 
-        rush_avg = average_off_def(offense = "BUF", defense = "KC", play_type = "rush_attempt", funcname = average_yards)[0]
-        complete = average_off_def(offense = "BUF", defense = "KC", play_type = "complete_pass", funcname = completion_percentage)
-        pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
+        #rush_avg = average_off_def(offense = "BUF", defense = "KC", play_type = "rush_attempt", funcname = average_yards)[0]
+        #complete = average_off_def(offense = "BUF", defense = "KC", play_type = "complete_pass", funcname = completion_percentage)
+        #pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
 
     def choosePlay(self, offense, defense):
         outcomes = ["rush_attempt", "pass_attempt", "sack", "fumble", "interception", "penalty"]

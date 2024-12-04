@@ -6,7 +6,6 @@ class Play:
     def __init__(self, name):
         self._name = None  
         self._result = { 
-            'success': False,
             'yards': 0,
             'timeElapsed':0}
     
@@ -41,7 +40,7 @@ class Play:
 
     def calculateTimeElapsed(self, offense, defense):
         #Uses team class functions to find average time for offense and defense team
-        average1 = offense.average_time(self._name)
+        average1 = offense.average_time(self._name, 'posteam')
         average2 = defense.average_time(self._name, 'defteam')
         return (average1+average2)/2
     
@@ -59,31 +58,6 @@ class Play:
         
         buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
     
-    def makePlay(self, offense, defense):
-        offenseChance = offense.pass_percent(self._name)
-        defenseChance = defense.pass_percent(self._name, 'defteam')
-        offenseSuccess = random.random(0,1) < offenseChance
-        defenseSuccess = random.random(0,1) < defenseChance
-
-        if offenseSuccess and defenseSuccess:
-            yards = 0
-            time = self.calculateTimeElapsed(self, offense, defense)/2
-            #chancetoPick()
-            self.set_result(yards, time)
-        elif offenseSuccess and not defenseSuccess:
-            mean, sd = offense.average_off_def(offense, defense, self._name)
-            yards = offense.random_yards(mean, sd, 75, 0)
-            time = self.calculateTimeElapsed(self, offense, defense)
-            self.set_result(yards, time)
-        elif not offenseSuccess and defenseSuccess:
-            yards = 0
-            time = 10
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
-        elif not offenseSuccess and not defenseSuccess:
-            yards = 0
-            time = 10
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
-        return self._result
     
 class PassPlay(Play):
     def __init__(self):
@@ -91,28 +65,20 @@ class PassPlay(Play):
         Play.__init__(self, 'pass_attempt')
     
     def makePlay(self, offense, defense):
-        offenseChance = offense.pass_percent(self._name)
-        defenseChance = defense.pass_percent(self._name, 'defteam')
+        offenseChance = offense.average_off_def(offense,defense, 'complete_pass', 'completion_percentage')       
         offenseSuccess = random.random(0,1) < offenseChance
-        defenseSuccess = random.random(0,1) < defenseChance
-
-        if offenseSuccess and defenseSuccess:
-            yards = 0
-            time = self.calculateTimeElapsed(self, offense, defense)/2
-            #chancetoPick()
-            self.set_result(yards, time)
-        elif offenseSuccess and not defenseSuccess:
-            mean, sd = offense.average_off_def(offense, defense, self._name)
-            yards = offense.random_yards(mean, sd, 75, 0)
-            self.set_result(yards, time)
-        elif not offenseSuccess and defenseSuccess:
+        
+        if offenseSuccess:
+            self._name = 'complete_pass'
+            averageYards, stdYards = offense.average_off_def(offense, defense, 'average_yards')
+            yards = offense.random_yards(averageYards, stdYards, 75, 0)
+            time = self.calculateTimeElapsed(self, offense, defense)
+            self.set_result(yards, 10+time)        
+        elif not offenseSuccess:
             yards = 0
             time = 10
             self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
-        elif not offenseSuccess and not defenseSuccess:
-            yards = 0
-            time = 10
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+    
         return self._result
 
 class RushPlay(Play):
@@ -121,52 +87,36 @@ class RushPlay(Play):
         Play.__init__(self, 'rush_attempt')
 
     def makePlay(self, offense, defense):
-        offenseChance = offense.play_percent(self._name)
-        defenseChance = defense.play_percent(self._name, 'defteam')
-        offenseSuccess = random.random(0,1) < offenseChance
-        defenseSuccess = random.random(0,1) < defenseChance
-
-        if offenseSuccess and defenseSuccess:
-            ############################################
-            mean, sd = offense.average_off_def(offense, defense, self._name)
-            yards = offense.random_yards(mean, sd, 75, 0)
-            time = self.calculateTimeElapsed(self, offense, defense)/2
-            self.set_result(yards, time)
-        elif offenseSuccess and not defenseSuccess:
-            mean, sd = offense.average_off_def(offense, defense, self._name)
-            yards = offense.random_yards(mean, sd, 75, 0)
-            time = self.calculateTimeElapsed(self, offense, defense)
-            self.set_result(yards, time)
-        elif not offenseSuccess and defenseSuccess:
-            yards = 0
-            time = 10
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
-        elif not offenseSuccess and not defenseSuccess:
-            yards = 0
-            time = 10
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+        mean, sd = offense.average_off_def(offense, defense, self._name, 'average_yards')
+        yards = offense.random_yards(mean, sd, 75, 0)
+        time = self.calculateTimeElapsed(self, offense, defense)
+        self.set_result(yards, time)
         return self._result
 
 class FieldGoal(Play):
     def __init__(self):
-        self._success = False
         Play.__init__(self, 'field goal')
+        self._result = { 
+            'success': False,
+            'yards': 0,
+            'timeElapsed':0}
 
     def getSuccess(self):
-        return self._success
+        return self._result['success']
 
     def makePlay(self, offense, defense):
-        if random(0, 1) <= offense.fieldGoalChance():
+        #70 30 field goal chance for now
+        if random(0, 1) <= 0.7: #offense.fieldGoalChance()
             self._success = True
         self.set_result(0, 10)
         return self._result 
 
 class KickOff(Play):
     def __init__(self):
-        Play.__init__(self, 'kick off')
+        Play.__init__(self, 'kick_off')
 
     def makePlay(self, offense, defense):
-        yards = offense.average_return_yards(self)
+        yards = 10 #offense.average_return_yards(self)
         time = 5 + self.calculateTimeElapsed2(yards)
         self.set_result(yards, time)
         return self._result 
