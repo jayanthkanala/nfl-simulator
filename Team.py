@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import nfl_data_py as nfl
+from scipy.stats import skewnorm
 
 pd.options.display.max_columns = None
 nfls = nfl.import_pbp_data([2023], downcast=True, cache=False, alt_path=None)
@@ -102,4 +103,35 @@ class Team:
     
     def fieldGoalChance(self):
         x=x
-            
+    
+    def average_off_def(offense, defense, play_type, funcname): #Averages offense with defense based on play_type and function name
+        if funcname == average_yards:
+            off_mean = funcname(team = offense, play_type = play_type, offdef = "posteam")[0] #Use 0 index in case of multiple returns in function
+            def_mean = funcname(team = defense, play_type = play_type, offdef = "defteam")[0]
+            off_sd = funcname(team = offense, play_type = play_type, offdef = "posteam")[1] #Use 0 index in case of multiple returns in function
+            def_sd = funcname(team = defense, play_type = play_type, offdef = "defteam")[1]
+            avg_yards = (off_mean + def_mean) / 2
+            avg_sd = (off_sd + def_sd) / 2
+            return avg_yards, avg_sd
+        else:
+            off_mean = funcname(team = offense, play_type = play_type, offdef = "posteam")
+            def_mean = funcname(team = defense, play_type = play_type, offdef = "defteam")
+            avg = (off_mean + def_mean) / 2
+            return avg
+
+        rush_avg = average_off_def(offense = "BUF", defense = "KC", play_type = "rush_attempt", funcname = average_yards)[0]
+        complete = average_off_def(offense = "BUF", defense = "KC", play_type = "complete_pass", funcname = completion_percentage)
+        pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
+
+    def random_yards(mean, sd, yards, skewness):
+        while True:
+            rand_yards = skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)
+            if (yards - 100) <= rand_yards <= yards:
+                break
+        return rand_yards
+
+        mean = average_off_def(offense = "BUF", defense = "KC", play_type = "fumble", funcname = average_yards)[0]
+        sd = average_off_def(offense = "BUF", defense = "KC", play_type = "fumble", funcname = average_yards)[1]
+
+        buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
+                

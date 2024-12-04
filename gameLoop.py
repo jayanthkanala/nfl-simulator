@@ -30,17 +30,17 @@ def main():
             elif var.get_kick_off() == True:
                 play = KickOff()
             else:
-                pickPlay()
+                pickPlay() ########################Test
                 play = RushPlay()
                 play = PassPlay()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
             #Then determine a range of yards given success
-            result=play.makePlay(var.get_offense(), var.get_defense())
+            result=play.makePlay(var.get_offense(), var.get_defense()) ####################Test
             
 
-            if var.get_position()+result['yards']>+ endZone:
+            if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
                 var.set_field_goal(True)
                 var.add_clock(result['timeElapsed'])

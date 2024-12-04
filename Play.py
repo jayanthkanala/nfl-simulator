@@ -8,7 +8,6 @@ class Play:
             'success': False,
             'yards': 0,
             'timeElapsed':0}
-        
     
     # Getter and Setter for name
     def get_name(self):
@@ -47,9 +46,32 @@ class Play:
     
     def calculateTimeElapsed2(self, yards):
         return yards*2
+    
+    def makePlay(self, offense, defense):
+        offenseChance = offense.pass_percent(self._name)
+        defenseChance = defense.pass_percent(self._name, 'defteam')
+        offenseSuccess = random.random(0,1) < offenseChance
+        defenseSuccess = random.random(0,1) < defenseChance
 
-
-
+        if offenseSuccess and defenseSuccess:
+            yards = 0
+            time = self.calculateTimeElapsed(self, offense, defense)/2
+            chancetoPick()
+            self.set_result(yards, time)
+        elif offenseSuccess and not defenseSuccess:
+            yards = offense.average_yards(self._name)
+            time = self.calculateTimeElapsed(self, offense, defense)
+            self.set_result(yards, time)
+        elif not offenseSuccess and defenseSuccess:
+            yards = 0
+            time = 10
+            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+        elif not offenseSuccess and not defenseSuccess:
+            yards = 0
+            time = 10
+            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+        return self._result
+    
 class PassPlay(Play):
     def __init__(self):
         self._interceptChance = 0
@@ -64,7 +86,7 @@ class PassPlay(Play):
         if offenseSuccess and defenseSuccess:
             yards = 0
             time = self.calculateTimeElapsed(self, offense, defense)/2
-            chancetoPick()
+            #chancetoPick()
             self.set_result(yards, time)
         elif offenseSuccess and not defenseSuccess:
             yards = offense.average_yards(self._name)
@@ -92,7 +114,7 @@ class RushPlay(Play):
         defenseSuccess = random.random(0,1) < defenseChance
 
         if offenseSuccess and defenseSuccess:
-            yards = offense.average_yards(self._name)/3
+            yards = random_yards(mean, sd)
             time = self.calculateTimeElapsed(self, offense, defense)/2
             self.set_result(yards, time)
         elif offenseSuccess and not defenseSuccess:
