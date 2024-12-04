@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import nfl_data_py as nfl
-from scipy.stats import skewnorm
+from random import random
+
 
 pd.options.display.max_columns = None
 nfls = nfl.import_pbp_data([2023], downcast=True, cache=False, alt_path=None)
@@ -104,18 +105,16 @@ class Team:
     def fieldGoalChance(self):
         x=x
     
-    def average_off_def(offense, defense, play_type, funcname): #Averages offense with defense based on play_type and function name
-        if funcname == average_yards:
-            off_mean = funcname(team = offense, play_type = play_type, offdef = "posteam")[0] #Use 0 index in case of multiple returns in function
-            def_mean = funcname(team = defense, play_type = play_type, offdef = "defteam")[0]
-            off_sd = funcname(team = offense, play_type = play_type, offdef = "posteam")[1] #Use 0 index in case of multiple returns in function
-            def_sd = funcname(team = defense, play_type = play_type, offdef = "defteam")[1]
+    def average_off_def(self, offense, defense, play_type, funcname): #Averages offense with defense based on play_type and function name
+        if funcname == 'average_yards':
+            off_mean, off_sd = offense.funcname(team = offense, play_type = play_type, offdef = "posteam")[0] #Use 0 index in case of multiple returns in function
+            def_mean, def_sd = defense.funcname(team = defense, play_type = play_type, offdef = "defteam")[0]
             avg_yards = (off_mean + def_mean) / 2
             avg_sd = (off_sd + def_sd) / 2
             return avg_yards, avg_sd
         else:
-            off_mean = funcname(team = offense, play_type = play_type, offdef = "posteam")
-            def_mean = funcname(team = defense, play_type = play_type, offdef = "defteam")
+            off_mean = offense.funcname(team = offense, play_type = play_type, offdef = "posteam")
+            def_mean = offense.funcname(team = defense, play_type = play_type, offdef = "defteam")
             avg = (off_mean + def_mean) / 2
             return avg
 
@@ -123,15 +122,24 @@ class Team:
         complete = average_off_def(offense = "BUF", defense = "KC", play_type = "complete_pass", funcname = completion_percentage)
         pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
 
-    def random_yards(mean, sd, yards, skewness):
-        while True:
-            rand_yards = skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)
-            if (yards - 100) <= rand_yards <= yards:
-                break
-        return rand_yards
+    def choosePlay(self, offense, defense):
+        outcomes = ["rush_attempt", "pass_attempt", "sack", "fumble", "interception", "penalty"]
+        probs = []
+        for outcome in range(len(outcomes)):
+            prob = self.average_off_def(offense = offense, defense = defense, play_type = outcomes[outcome], funcname = 'play_percent')
+            probs.append(prob)
 
-        mean = average_off_def(offense = "BUF", defense = "KC", play_type = "fumble", funcname = average_yards)[0]
-        sd = average_off_def(offense = "BUF", defense = "KC", play_type = "fumble", funcname = average_yards)[1]
+        total = 0
+        normalized_probs = []
+        for p in probs:
+            total += p
+        for p in probs:
+            normal_prob = p / total
+            normalized_probs.append(normal_prob)
+         #Defines normalized probs list
 
-        buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
+        outcomes = ["rush_attempt", "pass_attempt", "sack", "penalty"]
+        choice = random.choices(outcomes, weights=normalized_probs, k=1)
+
+        return choice
                 

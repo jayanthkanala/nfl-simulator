@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from scipy.stats import skewnorm
 
 class Play:
     def __init__(self, name):
@@ -47,6 +48,17 @@ class Play:
     def calculateTimeElapsed2(self, yards):
         return yards*2
     
+    def random_yards(mean, sd, yards, skewness):
+        while True:
+            rand_yards = skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)
+            if (yards - 100) <= rand_yards <= yards:
+                break
+        return rand_yards
+
+        mean, sd = average_off_def(offense = "BUF", defense = "KC", play_type = "fumble")[0]
+        
+        buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
+    
     def makePlay(self, offense, defense):
         offenseChance = offense.pass_percent(self._name)
         defenseChance = defense.pass_percent(self._name, 'defteam')
@@ -56,10 +68,11 @@ class Play:
         if offenseSuccess and defenseSuccess:
             yards = 0
             time = self.calculateTimeElapsed(self, offense, defense)/2
-            chancetoPick()
+            #chancetoPick()
             self.set_result(yards, time)
         elif offenseSuccess and not defenseSuccess:
-            yards = offense.average_yards(self._name)
+            mean, sd = offense.average_off_def(offense, defense, self._name)
+            yards = offense.random_yards(mean, sd, 75, 0)
             time = self.calculateTimeElapsed(self, offense, defense)
             self.set_result(yards, time)
         elif not offenseSuccess and defenseSuccess:
@@ -89,8 +102,8 @@ class PassPlay(Play):
             #chancetoPick()
             self.set_result(yards, time)
         elif offenseSuccess and not defenseSuccess:
-            yards = offense.average_yards(self._name)
-            time = self.calculateTimeElapsed(self, offense, defense)
+            mean, sd = offense.average_off_def(offense, defense, self._name)
+            yards = offense.random_yards(mean, sd, 75, 0)
             self.set_result(yards, time)
         elif not offenseSuccess and defenseSuccess:
             yards = 0
@@ -114,11 +127,14 @@ class RushPlay(Play):
         defenseSuccess = random.random(0,1) < defenseChance
 
         if offenseSuccess and defenseSuccess:
-            yards = random_yards(mean, sd)
+            ############################################
+            mean, sd = offense.average_off_def(offense, defense, self._name)
+            yards = offense.random_yards(mean, sd, 75, 0)
             time = self.calculateTimeElapsed(self, offense, defense)/2
             self.set_result(yards, time)
         elif offenseSuccess and not defenseSuccess:
-            yards = offense.average_yards(self._name)
+            mean, sd = offense.average_off_def(offense, defense, self._name)
+            yards = offense.random_yards(mean, sd, 75, 0)
             time = self.calculateTimeElapsed(self, offense, defense)
             self.set_result(yards, time)
         elif not offenseSuccess and defenseSuccess:

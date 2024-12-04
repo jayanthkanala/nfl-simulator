@@ -23,21 +23,22 @@ def main():
                 var.set_offense(var.get_defense())
                 var.set_defense(teamToSwitch)
                 var.set_switch_sides(False)
-
+            offense = var.get_offense()
+            defense = var.get_defense()
             #Check what type of play needs to be made using
             if var.get_field_goal() == True:
                 play = FieldGoal()
             elif var.get_kick_off() == True:
                 play = KickOff()
             else:
-                pickPlay() ########################Test
+                var.get_offense().choosePlay(offense, defense) ########################Test
                 play = RushPlay()
                 play = PassPlay()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
             #Then determine a range of yards given success
-            result=play.makePlay(var.get_offense(), var.get_defense()) ####################Test
+            result=play.makePlay(offense, defense) ####################Test
             
 
             if var.get_position()+result['yards'] >+ endZone:
