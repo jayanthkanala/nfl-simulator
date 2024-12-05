@@ -128,7 +128,7 @@ class Team:
         #pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
 
     def choosePlay(self, offense, defense):
-        outcomes = ["rush_attempt", "pass_attempt", "sack", "fumble", "interception", "penalty"]
+        outcomes = ["rush_attempt", "pass_attempt"] #, "sack", "fumble", "interception", "penalty"
         probs = []
         for outcome in range(len(outcomes)):
             prob = self.average_off_def(offense = offense, defense = defense, play_type = outcomes[outcome], funcname = 'play_percent')
@@ -143,7 +143,7 @@ class Team:
             normalized_probs.append(normal_prob)
          #Defines normalized probs list
 
-        outcomes = ["rush_attempt", "pass_attempt", "sack", "penalty"]
+        outcomes = ["rush_attempt", "pass_attempt"] #, "sack", "penalty"
         choice = random.choices(outcomes, weights=normalized_probs, k=1)
 
         return choice

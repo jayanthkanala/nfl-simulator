@@ -16,7 +16,7 @@ def main():
         var = GameVar(awayTeam, homeTeam)
 
     while var.get_quarter() <= 4:
-        while var.get_clock <= float(15*60): #time in seconds
+        while var.get_clock() <= float(15*60): #time in seconds
             #Check if sides need to be switched
             if var.get_switch_sides() == True:
                 teamToSwitch = var.get_offense()
@@ -31,9 +31,11 @@ def main():
             elif var.get_kick_off() == True:
                 play = KickOff()
             else:
-                var.get_offense().choosePlay(offense, defense) ########################Test
-                play = RushPlay()
-                play = PassPlay()
+                choice = var.get_offense().choosePlay(offense, defense) ########################Test
+                if choice == 'rush_attempt':
+                  play = RushPlay()
+                elif choice == 'pass_attempt':
+                  play = PassPlay()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
@@ -46,12 +48,12 @@ def main():
                 var.set_field_goal(True)
                 var.add_clock(result['timeElapsed'])
 
-            if var.get_kick_off == True:
+            if var.get_kick_off() == True:
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
-                var.set_kick_off == False
+                var.set_kick_off(False)
 
-            elif var.get_field_goal == True:
+            elif var.get_field_goal() == True:
                 #If it was a succesful fieldgoal, add 1 to the offense teams score
                 if play.getSuccess() == True:
                     var.add_Score(1)

@@ -107,7 +107,7 @@ class FieldGoal(Play):
     def makePlay(self, offense, defense):
         #70 30 field goal chance for now
         if random.uniform(0.00, 1.00) <= 0.7: #offense.fieldGoalChance()
-            self._success = True
+            self._result['success'] = True
         self.set_result(0, 10)
         return self._result 
 

@@ -10,8 +10,8 @@ class GameVar:
         self._position = 0
         self._firstDown = 10 
         self._endZone = 100
-        self._offense = None
-        self._defense = None
+        self._offense = offense
+        self._defense = defense
         self._switchSides = False
         self._touchDown = False
         self._fieldGoal = False
