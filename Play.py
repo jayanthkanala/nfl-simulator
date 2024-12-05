@@ -66,7 +66,7 @@ class PassPlay(Play):
     
     def makePlay(self, offense, defense):
         offenseChance = offense.average_off_def(offense,defense, 'complete_pass', 'completion_percentage')       
-        offenseSuccess = random.random(0,1) < offenseChance
+        offenseSuccess = random.uniform(0.00,1.00) < offenseChance
         
         if offenseSuccess:
             self._name = 'complete_pass'
@@ -106,7 +106,7 @@ class FieldGoal(Play):
 
     def makePlay(self, offense, defense):
         #70 30 field goal chance for now
-        if random(0, 1) <= 0.7: #offense.fieldGoalChance()
+        if random.uniform(0.00, 1.00) <= 0.7: #offense.fieldGoalChance()
             self._success = True
         self.set_result(0, 10)
         return self._result 

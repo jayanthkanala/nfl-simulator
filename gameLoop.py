@@ -10,7 +10,7 @@ def main():
     homeTeam = 'x'
     awayTeam = 'y'
     #Coin Toss
-    if random.random(0, 1) >= 0.50:
+    if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
     else:
         var = GameVar(awayTeam, homeTeam)
