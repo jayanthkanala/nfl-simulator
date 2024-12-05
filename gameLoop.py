@@ -81,6 +81,12 @@ def main():
                 var.set_down(1)
                 var.set_switch_sides(True)
                 var.add_clock(result['timeElapsed'])
+
+            elif isinstance(play, Penalty):
+                var.set_first_down(var.get_position()-result['yards'])
+                var.add_position(result['yards'])
+                var.add_clock(result['timeElapsed'])
+                
             else:
                 var.add_down()
                 var.add_position(result['yards'])
