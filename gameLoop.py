@@ -1,5 +1,5 @@
 from GameVar import GameVar
-from Play import Play, KickOff, FieldGoal, RushPlay, PassPlay
+from Play import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty
 from Team import Team
 import random
 endZone = 100
@@ -41,6 +41,8 @@ def main():
                   play = RushPlay()
                 elif choice == ['pass_attempt']:
                   play = PassPlay()
+                elif choice == ['penalty']:
+                  play = Penalty()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
@@ -89,7 +91,7 @@ def main():
         quarter = var.get_quarter()
         var.set_quarter(quarter+1)
       
-    return var.get_homeScore, var.get_awayScore, playByplay
+    return var.get_homeScore(), var.get_awayScore(), playByplay
 
 main()
 

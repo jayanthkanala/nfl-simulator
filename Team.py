@@ -150,7 +150,7 @@ class Team:
         #pass_att_pct = average_off_def(offense = "BUF", defense = "KC", play_type = "pass_attempt", funcname = play_percent)
 
     def choosePlay(self, offense, defense):
-        outcomes = ["rush_attempt", "pass_attempt"] #, "sack", "fumble", "interception", "penalty"
+        outcomes = ["rush_attempt", "pass_attempt", "penalty"] #, "sack", "fumble", "interception", "penalty"
         probs = []
         for outcome in range(len(outcomes)):
             prob = self.average_off_def(offense = offense, defense = defense, play_type = outcomes[outcome], funcname = 'play_percent')

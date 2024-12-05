@@ -43,7 +43,6 @@ class Play:
         mean, sd, skew = offense.average_time(playtype)
         return self.random_yards_time(mean, sd, skew)/2
 
-
     def calculateTimeElapsed2(self, yards):
         return yards*2
 
@@ -161,3 +160,22 @@ class KickOff(Play):
         time = 5 + self.calculateTimeElapsed2(yards)
         self.set_result(yards, time)
         return self._result
+
+class Penalty(Play):
+    def __init__(self):
+        Play.__init__(self, 'penalty')
+        self._options = [5, 10, 15]
+        self._weights = [1555/2624, 679/2624, 390/2624]
+
+
+    def weighted_rand_penalty_yds(self):
+        return -1*(random.choices(self._options, self._weights, k =1)[0])
+
+    def makePlay(self, offense, defense):
+        yards = self.weighted_rand_penalty_yds()
+        self._name = f'{-1*yards} yards penalty'
+        time = self.calculateTimeElapsed('penalty', offense)
+        self.set_result(yards, time)
+        return self._result
+
+
