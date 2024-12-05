@@ -1,5 +1,6 @@
-from GameVar import GameVar, Team
-from Play import Play, PassPlay, RushPlay, KickOff, FieldGoal
+from GameVar import GameVar
+from Play import Play, KickOff, FieldGoal, RushPlay, PassPlay
+from Team import Team
 import random
 endZone = 100
 
@@ -7,14 +8,17 @@ def main():
     global endZone
     playByplay = []
     #These will be input from the GUI Jayanth is making
-    homeTeam = 'x'
-    awayTeam = 'y'
+    homeTeam = Team('BUF')
+    awayTeam = Team('KC')
     #Coin Toss
     if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
     else:
         var = GameVar(awayTeam, homeTeam)
+    var.set_homeTeam(homeTeam)
+    var.set_awayTeam(awayTeam)
 
+    x=0
     while var.get_quarter() <= 4:
         while var.get_clock() <= float(15*60): #time in seconds
             #Check if sides need to be switched
@@ -25,6 +29,7 @@ def main():
                 var.set_switch_sides(False)
             offense = var.get_offense()
             defense = var.get_defense()
+
             #Check what type of play needs to be made using
             if var.get_field_goal() == True:
                 play = FieldGoal()
@@ -32,23 +37,27 @@ def main():
                 play = KickOff()
             else:
                 choice = var.get_offense().choosePlay(offense, defense) ########################Test
-                if choice == 'rush_attempt':
+                if choice == ['rush_attempt']:
                   play = RushPlay()
-                elif choice == 'pass_attempt':
+                elif choice == ['pass_attempt']:
                   play = PassPlay()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
             #Then determine a range of yards given success
             result=play.makePlay(offense, defense) ####################Test
-            
+
+
 
             if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
                 var.set_field_goal(True)
                 var.add_clock(result['timeElapsed'])
+                var.add_touchdown()
+                var.set_position(0)
+                var.set_first_down(var.get_position()+10)
 
-            if var.get_kick_off() == True:
+            elif var.get_kick_off() == True:
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
                 var.set_kick_off(False)
@@ -61,30 +70,28 @@ def main():
                 var.set_field_goal(False)
                 var.add_clock(result['timeElapsed'])
                 var.set_switch_sides(True)
-            
+
             elif var.get_position()+play.get_yards() >= var.get_first_down():
                 var.set_down(1)
-                var.set_first_down(var.get_position+10)
+                var.set_first_down(var.get_position()+10)
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
 
             elif var.get_down() == 4:
                 var.set_down(1)
                 var.set_switch_sides(True)
-
+                var.add_clock(result['timeElapsed'])
             else:
                 var.add_down()
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
-            playByplay.append(play)
+            x +=1
+            print(f'Play {x}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense()}, Defense: {var.get_defense()}')
+            playByplay.append(result)
         #Add code to add play results to playbyplay
     return var.get_homeScore, var.get_awayScore, playByplay
-            
-if __name__ == '__main__':
 
-    
-    main()
-        
+main()
 
 
 
