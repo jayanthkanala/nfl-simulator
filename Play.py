@@ -4,7 +4,7 @@ from scipy.stats import skewnorm
 
 class Play:
     def __init__(self, name):
-        self._name = None
+        self._name = name
         self._result = {
             'yards': 0,
             'timeElapsed':0}
@@ -41,7 +41,7 @@ class Play:
     def calculateTimeElapsed(self, playtype, offense):
         #Uses team class functions to find average time for offense and defense team
         mean, sd, skew = offense.average_time(playtype)
-        return self.random_yards_time(mean, sd, skew)
+        return self.random_yards_time(mean, sd, skew)/2
 
 
     def calculateTimeElapsed2(self, yards):
@@ -117,9 +117,9 @@ class FieldGoal(Play):
     def makePlay(self, offense, defense):
         #70 30 field goal chance for now
         if random.uniform(0.00, 1.00) <= 0.7: #offense.fieldGoalChance()
-            self.set_result(True, 0, 10)
+            self.set_result(True, 0, 5)
         else:
-            self.set_result(False, 0, 10)
+            self.set_result(False, 0, 5)
         return self._result
 
 class KickOff(Play):

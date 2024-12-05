@@ -86,7 +86,7 @@ def main():
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
             x +=1
-            print(f'Play {x}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense()}, Defense: {var.get_defense()}')
+            print(f'Play {x} {play.get_name()}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
             playByplay.append(result)
         #Add code to add play results to playbyplay
     return var.get_homeScore, var.get_awayScore, playByplay
