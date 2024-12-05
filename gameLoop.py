@@ -47,8 +47,6 @@ def main():
             #Then determine a range of yards given success
             result=play.makePlay(offense, defense) ####################Test
 
-
-
             if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
                 var.set_field_goal(True)
@@ -88,7 +86,9 @@ def main():
             x +=1
             print(f'Play {x} {play.get_name()}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
             playByplay.append(result)
-        #Add code to add play results to playbyplay
+        quarter = var.get_quarter()
+        var.set_quarter(quarter+1)
+      
     return var.get_homeScore, var.get_awayScore, playByplay
 
 main()

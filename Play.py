@@ -62,6 +62,7 @@ class Play:
         return skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)[0]
 
 
+
 class PassPlay(Play):
     def __init__(self):
         self._interceptChance = 0
@@ -71,15 +72,34 @@ class PassPlay(Play):
         offenseChance = offense.average_off_def(offense,defense, 'complete_pass', 'completion_percentage')
         offenseSuccess = random.uniform(0.00,1.00) <= offenseChance
 
-        if offenseSuccess:
+        sackChance = 0.10
+        sackSuccess = random.uniform(0.00,1.00) <= sackChance
+
+        #interceptChance = 0.05
+        #interceptSuccess = random.uniform(0.00,1.00) <= interceptChance
+
+
+        if sackSuccess:
+            self._name = 'sack'
+            sack_mean, sack_std, sack_skew = defense.average_off_def(offense, defense, play_type = "sack", funcname = 'average_yards')
+            yards = self.random_yards_time(sack_mean, sack_std, sack_skew)
+            time = self.calculateTimeElapsed('sack', offense)
+            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+        #elif interceptSuccess:
+            #self._name = 'interception'
+            #int_mean, int_std, int_skew = defense.average_off_def(offense, defense, play_type = "interception", funcname = 'average_yards')
+            #yards = self.random_yards_time(int_mean, int_std, int_skew)
+            #time = self.calculateTimeElapsed('interception', offense)
+            #self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+        elif offenseSuccess:
             self._name = 'complete_pass'
             averageYards, stdYards, skew = offense.average_off_def(offense, defense, 'complete_pass', 'average_yards')
             yards = self.random_yards_time(averageYards, stdYards, skew)
             time = self.calculateTimeElapsed('complete_pass', offense)
             self.set_result(yards, 10+time)
-        elif not offenseSuccess:
+        else:
             yards = 0
-            time = 10
+            time = round(random.gauss(10, 2), 2)
             self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
 
         return self._result
@@ -90,10 +110,20 @@ class RushPlay(Play):
         Play.__init__(self, 'rush_attempt')
 
     def makePlay(self, offense, defense):
-        mean, sd, skew = offense.average_off_def(offense, defense, 'rush_attempt', 'average_yards')
-        yards = self.random_yards_time(mean, sd, skew)
-        time = self.calculateTimeElapsed('rush_attempt', offense)
-        self.set_result(yards, time)
+        sackChance = 0.05
+        sackSuccess = random.uniform(0.00,1.00) <= sackChance
+        if sackSuccess:
+            self._name = 'sack'
+            sack_mean, sack_std, sack_skew = defense.average_off_def(offense, defense, play_type = "sack", funcname = 'average_yards')
+            yards = self.random_yards_time(sack_mean, sack_std, sack_skew)
+            time = self.calculateTimeElapsed('sack', offense)
+            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
+
+        else:
+            mean, sd, skew = offense.average_off_def(offense, defense, 'rush_attempt', 'average_yards')
+            yards = self.random_yards_time(mean, sd, skew)
+            time = self.calculateTimeElapsed('rush_attempt', offense)
+            self.set_result(yards, time)
         return self._result
 
 class FieldGoal(Play):

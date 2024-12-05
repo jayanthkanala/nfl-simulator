@@ -21,7 +21,7 @@ class Team:
 
     def set_name(self, value):
         self._name = value
-        
+
     def pass_percent(self):
         team = self._name
         team_df = nfls[nfls['posteam'] == team] #Filter data frame based on offense team
@@ -164,8 +164,6 @@ class Team:
             normal_prob = p / total
             normalized_probs.append(normal_prob)
          #Defines normalized probs list
-
-        outcomes = ["rush_attempt", "pass_attempt"] #, "sack", "penalty"
         choice = random.choices(outcomes, weights=normalized_probs, k=1)
 
         return choice
