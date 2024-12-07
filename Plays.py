@@ -241,14 +241,14 @@ class PassPlay(Play):
         Play.__init__(self, 'pass_attempt')
 
     def int_chance(self, off, deff):
-        play_off = nfls[(nfls["pass_attempt"] == 1) & (nfls["posteam"] == off)]
+        play_off = nfls[(nfls["pass_attempt"] == 1) & (nfls["posteam"] == off.get_name())]
         count_off = 0
         total_off = 0
         for i in play_off["interception"]:
             count_off += i
             total_off += 1
         int_off = count_off / total_off
-        play_def = nfls[(nfls["pass_attempt"] == 1) & (nfls["defteam"] == deff)]
+        play_def = nfls[(nfls["pass_attempt"] == 1) & (nfls["defteam"] == deff.get_name())]
         count_def = 0
         total_def = 0
         for i in play_def["interception"]:
