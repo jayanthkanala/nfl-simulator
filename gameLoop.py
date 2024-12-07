@@ -58,7 +58,6 @@ def main(home, away):
                 var.set_field_goal(True)
                 var.add_clock(result['timeElapsed'])
                 var.add_touchdown()
-                var.set_position(0)
                 var.set_first_down(var.get_position()+10)
 
             elif var.get_kick_off() == True:
@@ -74,6 +73,7 @@ def main(home, away):
                 var.set_field_goal(False)
                 var.add_clock(result['timeElapsed'])
                 var.set_switch_sides(True)
+                var.set_position(0)
 
 
             elif var.get_down() == 4:
