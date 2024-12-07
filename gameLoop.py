@@ -5,12 +5,12 @@ from Team import Team
 import random
 endZone = 100
 
-def main(home, away):
+def main(homeTeam, awayTeam):
     global endZone
     game = Game()
     #These will be input from the GUI Jayanth is making
-    homeTeam = Team(home)
-    awayTeam = Team(away)
+    homeTeam = Team('BUF')
+    awayTeam = Team('KC')
     #Coin Toss
     if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
@@ -53,13 +53,26 @@ def main(home, away):
             else:
                 result=play.makePlay(offense, defense) ####################Test
 
+            if play.get_name == 'interception':
+              if var.get_position()+result['yards'] >+ endZone:
+                var.add_Score(6)
+                var.set_field_goal(True)
+                var.set_position(65)
+                var.add_clock(result['timeElapsed'])
+                var.add_touchdown()
+                var.set_switch_sides(True)
+              else:
+                var.set_position(20)
+                var.add_clock(result['timeElapsed'])
+                var.set_switch_sides(True)
+
             if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
                 var.set_field_goal(True)
                 var.set_position(65)
                 var.add_clock(result['timeElapsed'])
                 var.add_touchdown()
-                var.set_first_down(var.get_position()+10)
+                
 
             elif var.get_kick_off() == True:
                 var.add_position(result['yards'])
@@ -72,21 +85,24 @@ def main(home, away):
                     var.add_Score(1)
                 #Reset fieldgoal flag, add time elapsed during play, and flip on switch sides flag
                 var.set_field_goal(False)
+                var.set_kick_off(True)
                 var.add_clock(result['timeElapsed'])
-                var.set_switch_sides(True)
                 var.set_position(0)
+                var.set_first_down(10)
+                var.set_switch_sides(True)
 
 
             elif var.get_down() == 4:
                 if var.get_position()+play.get_yards() >= var.get_first_down():
-                #This check needs to be improved to not count for certain situations
                     var.set_down(1)
                     var.set_first_down(var.get_position()+10)
-                    var.add_position(result['yards'])
+                    var.add_touchdown()
+                    var.set_field_goal(True)
+                    var.set_position(65)
                     var.add_clock(result['timeElapsed'])
                 else:
                     var.set_down(1)
-                    var.add_position(result['yards'])
+                    var.set_position(65)
                     var.set_switch_sides(True)
                     var.add_clock(result['timeElapsed'])
 
@@ -124,10 +140,15 @@ def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10):
     #homeTeam = Team('BUF')
     #awayTeam = Team('KC')
     for x in range(numGames):
-        a, b, c = main(homeTeam, awayTeam)    
+        a, b, c = main(homeTeam, awayTeam)
         game_scores.append((a, b))
         games.append(c)
-    return games
+    return games, game_scores
+
+
+
+
+print(runSimulation()[1])
 
 
 

@@ -297,6 +297,10 @@ class PassPlay(Play):
         elif interceptSuccess:
             self._name = 'interception'
             int_mean, int_std, int_skew = defense.average_off_def(offense, defense, play_type = "interception", funcname = 'average_yards')
+            if int_mean == 0:
+                int_mean = 10
+                int_std = 10
+                int_skew = 2
             yards = self.random_yards_time(int_mean, int_std, int_skew)
             time = self.calculateTimeElapsed('interception', offense)
             self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
