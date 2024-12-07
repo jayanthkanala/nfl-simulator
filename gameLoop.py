@@ -48,7 +48,7 @@ def main(home, away):
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
             #Then determine a range of yards given success
-            if isinstance(play, Punt):
+            if isinstance(play, Punt) or  isinstance(play, FieldGoal):
                 result = play.makePlay(offense, var.get_position()) #Might need puntorkickargument
             else:
                 result=play.makePlay(offense, defense) ####################Test

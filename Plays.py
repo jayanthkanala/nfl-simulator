@@ -247,13 +247,6 @@ class Play:
             skewness = None
         return avg_time,sd, skewness
 
-        
-
-    
-        
-
-
-
 
 class PassPlay(Play):
     def __init__(self):
