@@ -1,12 +1,13 @@
 from GameVar import GameVar
 from Play import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty
+from Game import Game
 from Team import Team
 import random
 endZone = 100
 
 def main():
     global endZone
-    playByplay = []
+    game = Game()
     #These will be input from the GUI Jayanth is making
     homeTeam = Team('BUF')
     awayTeam = Team('KC')
@@ -86,20 +87,28 @@ def main():
                 var.set_first_down(var.get_position()-result['yards'])
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
-                
             else:
                 var.add_down()
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
             x +=1
             print(f'Play {x} {play.get_name()}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
-            playByplay.append(result)
+            play.set_game_results(var.get_homeScore(), var.get_awayScore(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter(), 0, isinstance(play, Penalty), var.get_field_goal(), play.get_success(), var.get_switch_sides())
+            game.updatePlayList(play.get_game_results())
         quarter = var.get_quarter()
         var.set_quarter(quarter+1)
-      
-    return var.get_homeScore(), var.get_awayScore(), playByplay
+    game.finishGame()
+    return var.get_homeScore(), var.get_awayScore(), game
 
-main()
+game_results = []
+games = []
+for x in range(20):
+  a, b, c = main()
+  game_results.append((a, b))
+  games.append(c)
+
+print(game_results)
+print(games)
 
 
 
