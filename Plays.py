@@ -101,7 +101,7 @@ class Play:
         #buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
 
     def random_yards_time(self, mean, sd, skewness):
-        return skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)[0]
+        return skewnorm.rvs(skewness, loc=mean, scale=abs(sd), size=1)[0]
     
     def fumble_chance(self, play_type, off, deff):
         play_off = nfls[(nfls[play_type] == 1) & (nfls["posteam"] == off)]
