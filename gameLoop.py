@@ -56,6 +56,7 @@ def main(home, away):
             if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
                 var.set_field_goal(True)
+                var.set_position(65)
                 var.add_clock(result['timeElapsed'])
                 var.add_touchdown()
                 var.set_first_down(var.get_position()+10)
