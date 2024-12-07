@@ -109,7 +109,7 @@ def main(home, away):
                 var.add_clock(result['timeElapsed'])
             x +=1
             print(f'Play {x} {play.get_name()}: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
-            play.set_game_results(var.get_homeScore(), var.get_awayScore(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter(), 0, isinstance(play, Penalty), var.get_field_goal(), play.get_success(), var.get_switch_sides())
+            play.set_game_results(var.get_homeScore(), var.get_awayScore(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter(), 0, play.isPenalty(), var.get_field_goal(), play.get_success(), var.get_switch_sides())
             game.updatePlayList(play.get_game_results())
         quarter = var.get_quarter()
         var.set_quarter(quarter+1)
