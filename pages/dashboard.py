@@ -1,5 +1,6 @@
 import datetime
 from dash import html, dcc, register_page, Output, Input, State, callback
+import dash
 import dash_bootstrap_components as dbc
 import nfl_data_py as nfl
 
@@ -15,7 +16,9 @@ year_range = range(1999, current_year + 1)
 
 # Page layout
 layout = html.Div([
-    html.H2("Team Comparison Dashboard"),
+    dcc.Store(id='input-data-store'),  # Store component to hold user inputs
+    dcc.Location(id='url', refresh=True),  # Component for URL redirection
+    html.H2("NFL Team Comparison Dashboard"),
     
     # Instructions
     html.Div([
@@ -92,7 +95,9 @@ layout = html.Div([
 
 # Callback for input validation and output generation
 @callback(
-    Output('output', 'children'),
+    [Output('input-data-store', 'data'),  # Save user inputs in the store
+     Output('output', 'children'),       # For validation messages
+     Output('url', 'pathname')],         # Redirect to the "/games" page
     Input('submit-button', 'n_clicks'),
     State('home_team', 'value'),
     State('away_team', 'value'),
@@ -102,45 +107,46 @@ layout = html.Div([
     State('team-a-loc', 'value'),
     State('team-b-loc', 'value'),
 )
-def update_output(n_clicks, home_team, away_team, year, weather, num_games, team_a_loc, team_b_loc):
+def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_games, team_a_loc, team_b_loc):
     if n_clicks > 0:
+        # Validation
         if not home_team or not away_team:
-            return "Please select both Team A and Team B."
+            return {}, "Please select both Team A and Team B.", dash.no_update
         if not year:
-            return "Please select a year."
+            return {}, "Please select a year.", dash.no_update
         if not weather:
-            return "Please select weather conditions."
+            return {}, "Please select weather conditions.", dash.no_update
         if not num_games or int(num_games) <= 0:
-            return "Please enter a valid number of games (1-10)."
+            return {}, "Please enter a valid number of games (1-10).", dash.no_update
         
-        # If all validations pass
-        return (f"Comparison Details:\n"
-                f"Team A: {home_team}, Location: {team_a_loc}\n"
-                f"Team B: {away_team}, Location: {team_b_loc}\n"
-                f"Year: {year}, Weather: {weather}, Games: {num_games}")
-    return ""
-# @callback(
-#     [Output('team-a-logo', 'src'), Output('team-b-logo', 'src')],
-#     [Input('home_team', 'value'), Input('away_team', 'value')]
-# )
+        # Save inputs to the store
+        data = {
+            'home_team': home_team,
+            'away_team': away_team,
+            'year': year,
+            'weather': weather,
+            'num_games': num_games,
+            'team_a_loc': team_a_loc,
+            'team_b_loc': team_b_loc,
+        }
+        return data, "Inputs saved successfully.", "/games"  # Redirect to /games
+
+    return {}, "", dash.no_update  # Default response
 @callback(
     Output('logos-container', 'children'),
     [Input('home_team', 'value'), Input('away_team', 'value')]
 )
 # TO FETCH SELECTED TEAMS LOGOS:
-# def update_logos(home_team, away_team):
-#     """Fetches the home team's and away team's logo after selecting each."""
-#     # Find the index of the selected teams in the teams list
-#     team_a_index = teams.index(home_team) if home_team in teams else None
-#     team_b_index = teams.index(away_team) if away_team in teams else None
-
-#     # Get the corresponding logos
-#     team_a_logo = logos[team_a_index] if team_a_index is not None else ""
-#     team_b_logo = logos[team_b_index] if team_b_index is not None else ""
-    
-#     return team_a_logo, team_b_logo
 def update_logos(home_team, away_team):
-    """Conditionally renders the logos for the selected teams and adds 'Vs' between them."""
+    """
+    Conditionally renders the logos for the selected teams and adds 'Vs' between them.
+
+    Args:
+        home_team (str): Selected team A.
+        away_team (str): Selected team B.
+
+    Returns:
+        list: Children elements containing the logos for the selected teams and "Vs" text."""
     children = []
 
     # Add Team A's logo if selected
