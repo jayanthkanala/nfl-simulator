@@ -91,7 +91,7 @@ class Play:
 
     def random_yards(self, mean, sd, yards, skewness):
         while True:
-            rand_yards = skewnorm.rvs(skewness, loc=mean, scale=sd, size=1)
+            rand_yards = skewnorm.rvs(skewness, loc=mean, scale=abs(sd), size=1)
             if (yards - 100) <= rand_yards <= yards:
                 break
         return rand_yards
