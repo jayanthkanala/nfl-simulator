@@ -124,8 +124,21 @@ class Play:
     def isPenalty(self):
         return (self._name in (nfls['penalty_type'].unique()))
     
+    
+    def percent_chance_penalty(self, play_type): #Assume penalty type is random (use entire nfl).
+        new = nfls[nfls[play_type] == 1]
+        count = 0
+        total = 0
+        for i in new["penalty"]:
+          count += i
+          total += 1
+        chance = count / total
+        return chance
+    
     def penalty_Check(self,  play_type):
         pen_types = nfls['penalty_type'].unique()
+        if random.uniform(0.00, 1.00) > self.percent_chance_penalty(play_type):
+            return None
         pen_prob, penalty_avgs = self.pen_probs(play_type)
         penalty_type = None
         for penalty, probability, avg in zip(pen_types, pen_prob, penalty_avgs):
@@ -354,7 +367,7 @@ class FieldGoal(Play):
             'timeElapsed':timeElapsed}
         
     def field_goal_percentage(self, currentPosition, offense): #Function calculates field goal percentage based on yardage interval of kick
-        fg = nfls[(nfls["field_goal_attempt"]== 1) & (abs((nfls["yardline_100"] - (100-currentPosition))) <= 5) & (nfls["posteam"]== offense) ] #Creates new df for fg attempts and the yardline being within 5 of the currentPosition
+        fg = nfls[(nfls["field_goal_attempt"]== 1) & (abs((nfls["yardline_100"] - (100-currentPosition))) <= 5) & (nfls["posteam"]== offense.get_name()) ] #Creates new df for fg attempts and the yardline being within 5 of the currentPosition
         count = 0
         total = 0
         for i in fg["field_goal_result"]:
