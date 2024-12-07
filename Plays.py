@@ -23,6 +23,13 @@ class Play:
             'FieldGoal': False,
             'TurnOver': False,
         }
+
+    def convert_time_to_seconds(self, time):
+        if not time:
+            return None #handles None values
+        minutes, seconds = time.split(':')
+        return int(minutes) * 60 + int(seconds)
+    
     def get_success(self):
         return False
 
