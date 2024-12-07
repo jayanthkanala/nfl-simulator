@@ -4,9 +4,9 @@ from dash import html, dcc,Output, Input, State, callback  # Ensure correct impo
 import nfl_data_py as nfl
 import pandas as pd
 # to see output of gameLoop.py
-# from gameLoop import main
-# res = main()
-# print(res)
+from gameLoop import main
+res = main()
+print(res)
 gameData = nfl.import_seasonal_data([1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010], 'ALL')
 gameDataFrame = pd.DataFrame(gameData)
 import plotly.graph_objects as go
@@ -81,7 +81,6 @@ def simulate_loading(_):
 )
 
 def display_game_results(data):
-    print("data in games page, display_game_results: ",data)
     if not data:
         return "No data provided. Please return to the dashboard to input your selections."
     
@@ -94,7 +93,6 @@ def display_game_results(data):
     # team_a_loc = data.get('team_a_loc', 'N/A')
     # team_b_loc = data.get('team_b_loc', 'N/A')
     # game_ids = [f"game_{i+1}" for i in range(20)]
-    print(data.get('num_games', 'N/A'))
     results = [
         html.Div(
             children=[
@@ -120,7 +118,7 @@ def display_game_results(data):
     Input("download-btn", "n_clicks"),
     prevent_initial_call=True
 )
-def export_csv():
+def export_csv(n_clicks):
     """Exports the DataFrame as a CSV when the button is clicked."""
     csv_string = gameDataFrame.to_csv(index=False)
     # Return the CSV file for download

@@ -131,7 +131,6 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
             'team_a_loc': team_a_loc,
             'team_b_loc': team_b_loc,
         }
-        print("data in dashboard:",data)
         return data, "Inputs saved successfully.", "/games"  # Redirect to /games
 
     return {}, "", dash.no_update  # Default response
