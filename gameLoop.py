@@ -1,5 +1,5 @@
 from GameVar import GameVar
-from Play import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty
+from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty
 from Game import Game
 from Team import Team
 import random
@@ -98,17 +98,16 @@ def main():
         quarter = var.get_quarter()
         var.set_quarter(quarter+1)
     game.finishGame()
-    return var.get_homeScore(), var.get_awayScore(), game
+    return var.get_homeScore(), var.get_awayScore(), game.getGame() #Returns game Dataframe
 
-game_results = []
-games = []
+game_scores = [] #score from each game
+games = [] #Each games dataframe
 for x in range(20):
   a, b, c = main()
-  game_results.append((a, b))
+  game_scores.append((a, b))
   games.append(c)
 
-print(game_results)
-print(games)
+
 
 
 
