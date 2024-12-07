@@ -1,5 +1,5 @@
 from GameVar import GameVar
-from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty
+from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty, Punt
 from Game import Game
 from Team import Team
 import random
@@ -42,13 +42,16 @@ def main():
                   play = RushPlay()
                 elif choice == ['pass_attempt']:
                   play = PassPlay()
-                elif choice == ['penalty']:
-                  play = Penalty()
+                elif choice == ['kickoff_attempt']:
+                    play = Punt()
 
             #Some way to calculate chances of each sides success for the play
             #Maybe it should instead calculate a chance of success for offense
             #Then determine a range of yards given success
-            result=play.makePlay(offense, defense) ####################Test
+            if isinstance(play, Punt):
+                result = play.makePlay(offense, var.get_position()) #Might need puntorkickargument
+            else:
+                result=play.makePlay(offense, defense) ####################Test
 
             if var.get_position()+result['yards'] >+ endZone:
                 var.add_Score(6)
@@ -72,21 +75,34 @@ def main():
                 var.add_clock(result['timeElapsed'])
                 var.set_switch_sides(True)
 
-            elif var.get_position()+play.get_yards() >= var.get_first_down():
-                var.set_down(1)
-                var.set_first_down(var.get_position()+10)
-                var.add_position(result['yards'])
-                var.add_clock(result['timeElapsed'])
 
             elif var.get_down() == 4:
-                var.set_down(1)
-                var.set_switch_sides(True)
-                var.add_clock(result['timeElapsed'])
+                if var.get_position()+play.get_yards() >= var.get_first_down():
+                #This check needs to be improved to not count for certain situations
+                    var.set_down(1)
+                    var.set_first_down(var.get_position()+10)
+                    var.add_position(result['yards'])
+                    var.add_clock(result['timeElapsed'])
+                else:
+                    var.set_down(1)
+                    var.add_position(result['yards'])
+                    var.set_switch_sides(True)
+                    var.add_clock(result['timeElapsed'])
 
-            elif isinstance(play, Penalty):
-                var.set_first_down(var.get_position()-result['yards'])
+            elif play.isPenalty():
                 var.add_position(result['yards'])
                 var.add_clock(result['timeElapsed'])
+                if var.get_position()+play.get_yards() >= var.get_first_down():
+                #This check needs to be improved to not count for certain situations
+                    var.set_down(1)
+                    var.set_first_down(var.get_position()+10)
+
+            elif var.get_position()+play.get_yards() >= var.get_first_down():
+                #This check needs to be improved to not count for certain situations
+                    var.set_down(1)
+                    var.set_first_down(var.get_position()+10)
+                    var.add_position(result['yards'])
+                    var.add_clock(result['timeElapsed'])
             else:
                 var.add_down()
                 var.add_position(result['yards'])
