@@ -53,7 +53,7 @@ layout = html.Div([
                 )
             ),
             html.Div([
-                dcc.Link("Plays", href="/plays"),
+                # dcc.Link("Plays", href="/plays"),
                 dcc.Link("Back to Home", href="/")
             ]),
             # Button to download the CSV
@@ -64,12 +64,6 @@ layout = html.Div([
         ]
     )
 ])
-
-def export_csv(n_clicks):
-    """Exports the DataFrame as a CSV when the button is clicked."""
-    csv_string = gameDataFrame.to_csv(index=False)
-    # Return the CSV file for download
-    return dcc.send_string(csv_string, filename="GameData.csv")
 # Callback to simulate data loading and toggle visibility
 @callback(
     [Output("loading-animation", "style"), Output("content-container", "style")],
@@ -81,19 +75,13 @@ def simulate_loading(_):
     time.sleep(3)  # Simulates content loading delay
     # Toggle visibility: Hide animation, show content
     return {"display": "none"}, {"display": "block"}
-
-# Callback for the download functionality
-@callback(
-    Output("download-df-csv", "data"),
-    Input("download-btn", "n_clicks"),
-    prevent_initial_call=True
-)
 @callback(
     Output('games-output', 'children'),
     Input('input-data-store', 'data')  # Access stored data
 )
 
 def display_game_results(data):
+    print("data in games page, display_game_results: ",data)
     if not data:
         return "No data provided. Please return to the dashboard to input your selections."
     
@@ -106,7 +94,7 @@ def display_game_results(data):
     # team_a_loc = data.get('team_a_loc', 'N/A')
     # team_b_loc = data.get('team_b_loc', 'N/A')
     # game_ids = [f"game_{i+1}" for i in range(20)]
-
+    print(data.get('num_games', 'N/A'))
     results = [
         html.Div(
             children=[
@@ -118,8 +106,22 @@ def display_game_results(data):
             ],
             className='game-result-container'
         )
-        for i in range(data['num_games'])
+        for i in range(int(data['num_games']))
     ]
     
     # Render the inputs dynamically
     return results
+
+# CSV DOWNLOAD FUNCTIONALITY
+
+# Callback for the download functionality
+@callback(
+    Output("download-df-csv", "data"),
+    Input("download-btn", "n_clicks"),
+    prevent_initial_call=True
+)
+def export_csv():
+    """Exports the DataFrame as a CSV when the button is clicked."""
+    csv_string = gameDataFrame.to_csv(index=False)
+    # Return the CSV file for download
+    return dcc.send_string(csv_string, filename="GameData.csv")

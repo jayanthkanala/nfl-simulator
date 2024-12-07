@@ -16,7 +16,7 @@ year_range = range(1999, current_year + 1)
 
 # Page layout
 layout = html.Div([
-    dcc.Store(id='input-data-store'),  # Store component to hold user inputs
+    dcc.Store(id='input-data-store', storage_type='session'),  # Store component to hold user inputs
     dcc.Location(id='url', refresh=True),  # Component for URL redirection
     html.H2("NFL Team Comparison Dashboard"),
     
@@ -111,7 +111,9 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
     if n_clicks > 0:
         # Validation
         if not home_team or not away_team:
-            return {}, "Please select both Team A and Team B.", dash.no_update
+            return {}, "Please select both Home Team and Away Team .", dash.no_update
+        if not team_a_loc or not team_b_loc:
+            return {}, "Please select locations for both Home Team and Away Team .", dash.no_update
         if not year:
             return {}, "Please select a year.", dash.no_update
         if not weather:
@@ -129,6 +131,7 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
             'team_a_loc': team_a_loc,
             'team_b_loc': team_b_loc,
         }
+        print("data in dashboard:",data)
         return data, "Inputs saved successfully.", "/games"  # Redirect to /games
 
     return {}, "", dash.no_update  # Default response
