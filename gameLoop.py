@@ -5,12 +5,12 @@ from Team import Team
 import random
 endZone = 100
 
-def main():
+def main(homeTeam, awayTeam):
     global endZone
     game = Game()
     #These will be input from the GUI Jayanth is making
-    homeTeam = Team('BUF')
-    awayTeam = Team('KC')
+    #homeTeam = Team('BUF')
+    #awayTeam = Team('KC')
     #Coin Toss
     if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
@@ -116,13 +116,17 @@ def main():
     game.finishGame()
     return var.get_homeScore(), var.get_awayScore(), game.getGame() #Returns game Dataframe
 
-game_scores = [] #score from each game
-games = [] #Each games dataframe
-for x in range(20):
-  a, b, c = main()
-  game_scores.append((a, b))
-  games.append(c)
 
+def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10):
+    game_scores = [] #score from each game
+    games = [] #Each games dataframe
+    #homeTeam = Team('BUF')
+    #awayTeam = Team('KC')
+    for x in range(numGames):
+        a, b, c = main(homeTeam, awayTeam)    
+        game_scores.append((a, b))
+        games.append(c)
+    return games
 
 
 
