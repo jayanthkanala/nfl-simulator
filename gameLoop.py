@@ -5,12 +5,12 @@ from Team import Team
 import random
 endZone = 100
 
-def main(homeTeam, awayTeam):
+def main(home, away):
     global endZone
     game = Game()
     #These will be input from the GUI Jayanth is making
-    #homeTeam = Team('BUF')
-    #awayTeam = Team('KC')
+    homeTeam = Team(home)
+    awayTeam = Team(away)
     #Coin Toss
     if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
