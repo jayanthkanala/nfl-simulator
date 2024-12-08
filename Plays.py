@@ -29,7 +29,7 @@ class Play:
             return None #handles None values
         minutes, seconds = time.split(':')
         return int(minutes) * 60 + int(seconds)
-    
+
     def get_success(self):
         return False
 
@@ -101,17 +101,12 @@ class Play:
         #buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
 
     def random_yards_time(self, mean, sd, skewness):
-        print(f"Debug: mean={mean}, sd={sd}, skewness={skewness}")
-        if not isinstance(sd,float):
-            sd=1e-6
-        if not isinstance(skewness,float):
-            skewness=1e-6
-        # if sd <= 0 or not np.isfinite(sd):
-        #     print(f"Warning: Invalid standard deviation (sd={sd}). Using a default small positive value.")
-        # sd = 1e-6
+        if not isinstance(sd, float):
+          sd = 1e-6
+        if not isinstance(skewness, float):
+          skewness = 1e-6
         return skewnorm.rvs(skewness, loc=mean, scale=abs(sd), size=1)[0]
 
-    
     def fumble_chance(self, play_type, off, deff):
         play_off = nfls[(nfls[play_type] == 1) & (nfls["posteam"] == off)]
         count_off = 0
@@ -129,11 +124,10 @@ class Play:
         fumble_chance_def = count_def / total_def
         fumble_pct = (fumble_chance_off + fumble_chance_def) / 2
         return fumble_pct
-    
+
     def isPenalty(self):
         return (self._name in (nfls['penalty_type'].unique()))
-    
-    
+
     def percent_chance_penalty(self, play_type): #Assume penalty type is random (use entire nfl).
         new = nfls[nfls[play_type] == 1]
         count = 0
@@ -143,19 +137,20 @@ class Play:
           total += 1
         chance = count / total
         return chance
-    
+
     def penalty_Check(self,  play_type):
         pen_types = nfls['penalty_type'].unique()
+        #Check if penalty
         if random.uniform(0.00, 1.00) > self.percent_chance_penalty(play_type):
-            return None
+          return None
         pen_prob, penalty_avgs = self.pen_probs(play_type)
         penalty_type = None
         for penalty, probability, avg in zip(pen_types, pen_prob, penalty_avgs):
-            if random.uniform(0.00,1.00) <= probability: 
+            if random.uniform(0.00,1.00) <= probability:
                 penalty_type = penalty
-            
+
         return penalty_type
-    
+
     def pen_probs(self, play_type):
         unique_penalties = nfls['penalty_type'].unique()
         new = nfls[(nfls[play_type] == 1) & (nfls["penalty"]==1)]
@@ -179,7 +174,7 @@ class Play:
             penalty_prob = penalty_frequencies[i] / sum(penalty_frequencies)
             penalty_probs.append(penalty_prob)
         return penalty_probs, penalty_avgs
-    
+
     def flag_yards(self, flag_type, play_type):
         unique_values = nfls['penalty_type'].unique()
         penalty_avgs = self.pen_probs(play_type)[1]
@@ -200,10 +195,10 @@ class Play:
         if flag_type in self.offensive_pens():
             return -yards
         if flag_type in self.defensive_pens():
-            return -yards
+            return yards
         else:###need check for special penalty types
-            return -yards 
-    
+            return -yards
+
     def offensive_pens(self):
         off_pens = []
         for i in nfls['penalty_type'].unique():
@@ -221,15 +216,6 @@ class Play:
         other_def_pens = ["Roughing The Passer", "Neutral Zone Infraction"]
         def_pens.extend(other_def_pens)
         return def_pens
-    
-    def special_teams_pens(self):
-        spec_pens = []
-        for i in nfls['penalty_type'].unique():
-            if (isinstance(i, str) and (("Kick" in i) or ("Kicker" in i))):
-                spec_pens.append(i)
-        other_spec_pens = ["Leverage", "Leaping"]
-        spec_pens.extend(other_spec_pens)
-        return spec_pens
 
     def avg_pen_time(self, penalty_type):
         time_seconds = []
@@ -255,6 +241,13 @@ class Play:
             sd = None
             skewness = None
         return avg_time,sd, skewness
+
+
+
+
+
+
+
 
 
 class PassPlay(Play):
@@ -306,6 +299,10 @@ class PassPlay(Play):
         elif interceptSuccess:
             self._name = 'interception'
             int_mean, int_std, int_skew = defense.average_off_def(offense, defense, play_type = "interception", funcname = 'average_yards')
+            if int_mean == 0:
+              int_mean = 10
+              int_std = 10
+              int_skew = 2
             yards = self.random_yards_time(int_mean, int_std, int_skew)
             time = self.calculateTimeElapsed('interception', offense)
             self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
@@ -367,7 +364,7 @@ class FieldGoal(Play):
             'success': success,
             'yards': yards,
             'timeElapsed':timeElapsed}
-        
+
     def field_goal_percentage(self, currentPosition, offense): #Function calculates field goal percentage based on yardage interval of kick
         fg = nfls[(nfls["field_goal_attempt"]== 1) & (abs((nfls["yardline_100"] - (100-currentPosition))) <= 5) & (nfls["posteam"]== offense.get_name()) ] #Creates new df for fg attempts and the yardline being within 5 of the currentPosition
         count = 0
@@ -432,7 +429,7 @@ class Punt(Play):
             if rand_punt < ((100- currentPosition) + 10): #Represents currentPosition + end zone length because punts can land in endzone
                 break
         return rand_punt[0]
-    
+
     def makePlay(self, offense, currentPosition, puntorkick):
         yards = self.punt_simulator(offense, currentPosition, puntorkick)
         time = self.calculateTimeElapsed(puntorkick, offense)
