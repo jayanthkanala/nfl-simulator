@@ -101,7 +101,16 @@ class Play:
         #buf_yards = random_yards(mean, sd, yards = 75, skewness = 0) #75 is a placeholder
 
     def random_yards_time(self, mean, sd, skewness):
+        print(f"Debug: mean={mean}, sd={sd}, skewness={skewness}")
+        if not isinstance(sd,float):
+            sd=1e-6
+        if not isinstance(skewness,float):
+            skewness=1e-6
+        # if sd <= 0 or not np.isfinite(sd):
+        #     print(f"Warning: Invalid standard deviation (sd={sd}). Using a default small positive value.")
+        # sd = 1e-6
         return skewnorm.rvs(skewness, loc=mean, scale=abs(sd), size=1)[0]
+
     
     def fumble_chance(self, play_type, off, deff):
         play_off = nfls[(nfls[play_type] == 1) & (nfls["posteam"] == off)]

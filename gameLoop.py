@@ -1,5 +1,5 @@
 from GameVar import GameVar
-from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Penalty, Punt
+from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Punt
 from Game import Game
 from Team import Team
 import random
@@ -124,7 +124,7 @@ def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10):
     #homeTeam = Team('BUF')
     #awayTeam = Team('KC')
     for x in range(numGames):
-        a, b, c = main(homeTeam, awayTeam)    
+        a, b, c = main(homeTeam, awayTeam)
         game_scores.append((a, b))
         games.append(c)
     return games

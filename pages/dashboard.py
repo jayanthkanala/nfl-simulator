@@ -9,8 +9,9 @@ register_page(__name__, path="/")
 
 # Fetch data for dropdowns
 weather_conditions = ['Sunny', 'Rainy', 'Snowy', 'Cloudy']
-teams = nfl.import_team_desc()['team_name'].tolist()
-logos= nfl.import_team_desc()['team_logo_squared'].tolist()
+td=nfl.import_team_desc()
+teams = td['team_name'].tolist()
+logos= td['team_logo_squared'].tolist()
 current_year = datetime.datetime.now().year
 year_range = range(1999, current_year + 1)
 
@@ -29,14 +30,14 @@ layout = html.Div([
     html.Div([
         html.Label('Select Team A:', className='label-class'),
         dcc.Dropdown(
-            options=[{'label': team, 'value': team} for team in teams],
+            options=[{'label': team, 'value': team} for team in td['team_name'].to_list()],
             value='',  # Default value
             id='home_team',
             className='dropdown-class',
         ),
         html.Label('Select Team B:', className='label-class'),
         dcc.Dropdown(
-            options=[{'label': team, 'value': team} for team in teams],
+            options=[{'label': team, 'value': team} for team in td['team_name'].to_list()],
             value='',  # Default value
             id='away_team',
             className='dropdown-class',
@@ -88,9 +89,9 @@ layout = html.Div([
 
     # Output Section
     html.Div(id='output', className='output-container'),
-    html.Div([
-        dcc.Link("Games", href="/games")
-    ])
+    # html.Div([
+    #     dcc.Link("Games", href="/games")
+    # ])
 ])
 
 # Callback for input validation and output generation
@@ -121,6 +122,10 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
         if not num_games or int(num_games) <= 0:
             return {}, "Please enter a valid number of games (1-10).", dash.no_update
         
+        team_a_index = td['team_name'].to_list().index(home_team) if home_team in td['team_name'].to_list() else None
+        team_a_abbr = td['team_abbr'].iloc[team_a_index] if team_a_index is not None else "N/A"
+        team_b_index = td['team_name'].to_list().index(away_team) if away_team in td['team_name'].to_list() else None
+        team_b_abbr = td['team_abbr'].iloc[team_b_index] if team_b_index is not None else "N/A"
         # Save inputs to the store
         data = {
             'home_team': home_team,
@@ -130,7 +135,10 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
             'num_games': num_games,
             'team_a_loc': team_a_loc,
             'team_b_loc': team_b_loc,
+            'homeTeam':team_a_abbr,
+            'awayTeam':team_b_abbr
         }
+        print(data)
         return data, "Inputs saved successfully.", "/games"  # Redirect to /games
 
     return {}, "", dash.no_update  # Default response
@@ -153,7 +161,7 @@ def update_logos(home_team, away_team):
 
     # Add Team A's logo if selected
     if home_team:
-        team_a_index = teams.index(home_team) if home_team in teams else None
+        team_a_index = td['team_name'].to_list().index(home_team) if home_team in td['team_name'].to_list() else None
         team_a_logo = logos[team_a_index] if team_a_index is not None else ""
         if team_a_logo:
             children.append(html.Img(src=team_a_logo, height='100px', style={'margin-right': '10px'}))
@@ -164,7 +172,7 @@ def update_logos(home_team, away_team):
 
     # Add Team B's logo if selected
     if away_team:
-        team_b_index = teams.index(away_team) if away_team in teams else None
+        team_b_index = td['team_name'].to_list().index(away_team) if away_team in td['team_name'].to_list() else None
         team_b_logo = logos[team_b_index] if team_b_index is not None else ""
         if team_b_logo:
             children.append(html.Img(src=team_b_logo, height='100px'))

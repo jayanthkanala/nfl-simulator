@@ -4,9 +4,7 @@ from dash import html, dcc,Output, Input, State, callback  # Ensure correct impo
 import nfl_data_py as nfl
 import pandas as pd
 # to see output of gameLoop.py
-from gameLoop import main
-res = main()
-print(res)
+import gameLoop as gameSimulation
 gameData = nfl.import_seasonal_data([1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010], 'ALL')
 gameDataFrame = pd.DataFrame(gameData)
 import plotly.graph_objects as go
@@ -93,6 +91,10 @@ def display_game_results(data):
     # team_a_loc = data.get('team_a_loc', 'N/A')
     # team_b_loc = data.get('team_b_loc', 'N/A')
     # game_ids = [f"game_{i+1}" for i in range(20)]
+    getTotalGames(data)
+    print("data in games",data['homeTeam'])
+    # totalGames = gameSimulation.runSimulation(homeTeam=data['homeTeam'],awayTeam=data['awayTeam'],numGames=int(data['num_games']))
+    # print(totalGames)
     results = [
         html.Div(
             children=[
@@ -109,6 +111,12 @@ def display_game_results(data):
     
     # Render the inputs dynamically
     return results
+
+
+def getTotalGames(data):
+    totalGames = gameSimulation.runSimulation(homeTeam=data['homeTeam'],awayTeam=data['awayTeam'],numGames=int(data['num_games']))[0]
+    # print(totalGames)
+    return totalGames
 
 # CSV DOWNLOAD FUNCTIONALITY
 

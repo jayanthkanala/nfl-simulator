@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import nfl_data_py as nfl
 from random import random
+from random import choices
 from scipy.stats import skew
 from scipy.stats import skewnorm
 
@@ -165,7 +166,7 @@ class Team:
             normal_prob = p / total
             normalized_probs.append(normal_prob)
          #Defines normalized probs list
-        choice = random.choices(outcomes, weights=normalized_probs, k=1)
+        choice = choices(outcomes, weights=normalized_probs, k=1)
 
         return choice
     
