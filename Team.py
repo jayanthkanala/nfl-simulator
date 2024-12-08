@@ -8,6 +8,7 @@ from scipy.stats import skewnorm
 
 pd.options.display.max_columns = None
 nfls = nfl.import_pbp_data([2023], downcast=True, cache=False, alt_path=None)
+print(nfls)
 team_dict = {}
 for team in nfls['home_team']:
     if team not in team_dict:
@@ -168,87 +169,4 @@ class Team:
         choice = random.choices(outcomes, weights=normalized_probs, k=1)
 
         return choice
-    
-    def pen_probs(self, play_type):
-        unique_values = nfls['penalty_type'].unique()
-        new = nfls[(nfls[play_type] == 1) & (nfls["penalty"]==1)]
-        penalty_frequencies = [0] * len(unique_values)
-        penalty_yds = [0] * len(unique_values)
-        penalty_probs = [] #Create dictionaries with penalty name as key
-        penalty_avgs = []
-        for i in new.index:
-            for k in range(len(unique_values)):
-                if unique_values[k] == new.loc[i, "penalty_type"]:
-                    penalty_frequencies[k] += 1
-                    penalty_yds[k] += new.loc[i, "penalty_yards"]
-        for i in range(len(penalty_yds)):
-            if penalty_frequencies[i] > 0:
-                penalty_avg = penalty_yds[i] / penalty_frequencies[i]
-                penalty_avgs.append(penalty_avg)
-            else:
-                penalty_avg = 0
-                penalty_avgs.append(penalty_avg)
 
-        for i in range(len(penalty_frequencies)):
-            penalty_prob = penalty_frequencies[i] / sum(penalty_frequencies)
-            penalty_probs.append(penalty_prob)
-        return penalty_probs, penalty_avgs
-    
-    def flag_yards(self, flag_type, play_type):
-        unique_values = nfls['penalty_type'].unique()
-        penalty_avgs = self.pen_probs(play_type)[1]
-        avg_flag_yds = 0
-        for idx, flag in enumerate(unique_values):
-            if flag_type == unique_values[idx]:
-                if  0 < penalty_avgs[idx] <= 5:
-                    yards = 5
-                elif 5 < penalty_avgs[idx] <= 10:
-                    yards = 10
-                elif penalty_avgs[idx] > 10 and (unique_values[idx] != "Defensive Pass Interference"):
-                    yards = 15
-                elif penalty_avgs[idx] == 0:
-                    yards = 0
-                elif flag_type == "Defensive Pass Interference":
-                    mean = penalty_avgs[idx]
-                    yards = skewnorm.rvs(2.5, mean, 10, 1)[0] #assume sd of 10 and skew of 2.5, returns array
-        return yards
-    
-    def random_penalty(self,  play_type):
-        pen_types = nfls['penalty_type'].unique()
-        pen_prob, penalty_avgs = self.pen_probs(play_type)
-        penalty_type = random.choices(pen_types, weights = pen_prob, k =1)
-        return penalty_type
-
-    def avg_pen_time(self, penalty_type):
-        time_seconds = []
-        for time in nfls["time"]:
-            time_seconds.append(self.convert_time_to_seconds(time))
-        nfls["time_seconds"] = time_seconds #New row in the data frame
-        nfls_index = nfls.index[(nfls["penalty"] == 1) & (nfls["penalty_type"] == penalty_type)]
-        count = 0
-        total = 0
-        times = []
-        for i in nfls_index:
-            if pd.notna(nfls.loc[i, "time_seconds"]) and pd.notna(nfls.loc[i+1, "time_seconds"]):
-                play_time = (nfls.loc[i, "time_seconds"]) - (nfls.loc[i+1, "time_seconds"])
-                count += play_time
-                total += 1
-                times.append(play_time)
-        if total > 0:
-            avg_time = count / total
-            sd = np.std(times)
-            skewness = skew(times)
-        else:
-            avg_time = None
-            sd = None
-            skewness = None
-        return avg_time,sd, skewness
-    
-    def special_teams_pens(self):
-        spec_pens = []
-        for i in nfls['penalty_type'].unique():
-            if (isinstance(i, str) and (("Kick" in i) or ("Kicker" in i))):
-                spec_pens.append(i)
-        other_spec_pens = ["Leverage", "Leaping"]
-        spec_pens.extend(other_spec_pens)
-        return spec_pens

@@ -72,7 +72,7 @@ def main(homeTeam, awayTeam):
                 var.set_position(65)
                 var.add_clock(result['timeElapsed'])
                 var.add_touchdown()
-                
+
 
             elif var.get_kick_off() == True:
                 var.add_position(result['yards'])
