@@ -8,7 +8,6 @@ from scipy.stats import skewnorm
 
 pd.options.display.max_columns = None
 nfls = nfl.import_pbp_data([2023], downcast=True, cache=False, alt_path=None)
-print(nfls)
 team_dict = {}
 for team in nfls['home_team']:
     if team not in team_dict:
@@ -123,7 +122,7 @@ class Team:
             total += 1
         avg_return = count / total
         sd = np.std(type_df['return_yards'])
-        return avg_return, sd
+        return avg_return, sd, skew
 
     def fieldGoalChance(self):
         x=x

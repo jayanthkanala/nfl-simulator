@@ -83,11 +83,10 @@ class Play:
 
     def calculateTimeElapsed(self, playtype, offense):
         #Uses team class functions to find average time for offense and defense team
-        mean, sd, skew = offense.average_time(playtype)
-        return self.random_yards_time(mean, sd, skew)/2
-
-    def calculateTimeElapsed2(self, yards):
-        return yards*2
+        avg, sd, skew = offense.average_time(playtype)
+        mean = avg + skewnorm.rvs(2, 18, scale=3, size=1)[0] #random Flat increase to time
+        #print('mean: ', mean, 'sd: ', sd, 'skew: ', skew)
+        return self.random_yards_time(mean, sd, skew)
 
     def random_yards(self, mean, sd, yards, skewness):
         while True:
@@ -141,7 +140,7 @@ class Play:
     def penalty_Check(self,  play_type):
         pen_types = nfls['penalty_type'].unique()
         #Check if penalty
-        if random.uniform(0.00, 1.00) > self.percent_chance_penalty(play_type):
+        if random.uniform(0.00, 1.00) > self.percent_chance_penalty(play_type)*6:
           return None
         pen_prob, penalty_avgs = self.pen_probs(play_type)
         penalty_type = None
@@ -242,13 +241,31 @@ class Play:
             skewness = None
         return avg_time,sd, skewness
 
-
-
-
-
-
-
-
+    def sack_chance(self, off, deff):
+      """
+      Calculates the chance of an interception based on offense and defense.
+      :param off: Abbreviation of offense.
+      :type off: string
+      :param deff: Abbreviation of defense.
+      :type deff: string
+      :return: Decimal representation of interception chance.
+      """
+      play_off = nfls[(nfls["pass_attempt"] == 1) & (nfls["posteam"] == off)]
+      count_off = 0
+      total_off = 0
+      for i in play_off["sack"]:
+        count_off += i
+        total_off += 1
+      sack_off = (count_off / total_off) if total_off != 0 else 0.02
+      play_def = nfls[(nfls["pass_attempt"] == 1) & (nfls["defteam"] == deff)]
+      count_def = 0
+      total_def = 0
+      for i in play_def["sack"]:
+        count_def += i
+        total_def += 1
+      sack_def = count_def / total_def  if total_def != 0 else 0.02
+      sack_pct = (sack_off + sack_def) / 2
+      return sack_pct
 
 class PassPlay(Play):
     def __init__(self):
@@ -277,7 +294,7 @@ class PassPlay(Play):
         offenseChance = offense.average_off_def(offense,defense, 'complete_pass', 'completion_percentage')
         offenseSuccess = random.uniform(0.00,1.00) <= offenseChance
 
-        sackChance = 0.10
+        sackChance = self.sack_chance(offense, defense)
         sackSuccess = random.uniform(0.00,1.00) <= sackChance
 
         interceptChance = self.int_chance(offense, defense)
@@ -325,8 +342,6 @@ class RushPlay(Play):
         Play.__init__(self, 'rush_attempt')
 
     def makePlay(self, offense, defense):
-        sackChance = 0.10 #Add function for this
-        sackSuccess = random.uniform(0.00,1.00) <= sackChance
         penalty = self.penalty_Check('pass_attempt')
         if penalty:
             yards = self.flag_yards(penalty, 'pass_attempt')
@@ -334,13 +349,6 @@ class RushPlay(Play):
             mean, sd, skew = self.avg_pen_time(penalty)
             time = self.random_yards_time(mean, sd, skew)
             self.set_result(yards, time)
-        elif sackSuccess:
-            self._name = 'sack'
-            sack_mean, sack_std, sack_skew = defense.average_off_def(offense, defense, play_type = "sack", funcname = 'average_yards')
-            yards = self.random_yards_time(sack_mean, sack_std, sack_skew)
-            time = self.calculateTimeElapsed('sack', offense)
-            self.set_result(yards, time) #Use a default of 10 seconds for failed play for now
-
         else:
             mean, sd, skew = offense.average_off_def(offense, defense, 'rush_attempt', 'average_yards')
             yards = self.random_yards_time(mean, sd, skew)
@@ -390,18 +398,53 @@ class FieldGoal(Play):
             time = self.random_yards_time(mean, sd, skew)
             self.set_result(False, -1*yards, time)
         elif fieldGoalSuccess:
-            self.set_result(True, 0, 5)
+            time = self.calculateTimeElapsed('field_goal_attempt', offense)
+            self.set_result(True, 0, time)
         else:
-            self.set_result(False, 0, 5)
+            time = self.calculateTimeElapsed('field_goal_attempt', offense)
+            self.set_result(False, 0, time)
         return self._result
 
 class KickOff(Play):
     def __init__(self):
         Play.__init__(self, 'kick_off')
 
+    def punt_kick_simulator(self, off, currentPosition, puntorkick = 'kickoff_attempt'): #parameter is offense
+        """
+        Calculates a random punt or kick yardage based on the offense and current position on the field.
+        :param off: Abbreviation of offensive team name.
+        :type off: string
+        :param currentPosition: Position on field for offense (1-100)
+        :type currentPosition: float
+        :param puntorkick: "punt_attempt" or "kickoff_attempt"
+        :type puntorkick: string
+        :return: A punt or kick yardage.
+        """
+        if puntorkick == 'kickoff_attempt':
+            self._name = 'kickoff'
+        punt_df = nfls[(nfls[puntorkick] == 1) & (nfls["posteam"]==off)]
+        count = 0
+        total = 0
+        for i in punt_df["kick_distance"]:
+            count += i
+            total += 1
+        punt_avg = count / total
+        punt_sd = np.std(punt_df["kick_distance"])
+        skewness = skew(punt_df["kick_distance"])
+        while True: #Check that punt isn't too far
+            rand_punt = skewnorm.rvs(skewness, punt_avg, punt_sd, 1)
+            if rand_punt < ((100- currentPosition) + 10): #Represents currentPosition + end zone length because punts can land in endzone
+                break
+        return rand_punt[0]
+
     def makePlay(self, offense, defense):
-        yards = 10 #offense.average_return_yards(self)
-        time = 5 + self.calculateTimeElapsed2(yards)
+        kick_yards = (35+self.punt_kick_simulator(defense.get_name(), 35, puntorkick = 'kickoff_attempt'))
+        mean, sd, skew = offense.average_return_yards("kickoff_attempt", 'posteam')
+        return_yards = self.random_yards_time(mean, sd, skew)
+        yards = return_yards + (100-kick_yards)
+        if yards < 0:
+          yards = 20
+        time = self.calculateTimeElapsed('kickoff_attempt', offense)
         self.set_result(yards, time)
         return self._result
 
