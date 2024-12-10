@@ -62,7 +62,8 @@ def playGame(homeTeam, awayTeam):
                 elif var.get_position() < 60 and var.get_down() == 4: #If its 4th down and the endzone is more than 40 yards away
                     play = Punt() #initiate a punt play
                 else:
-                    choice = var.get_offense().choosePlay(offense, defense) #Checks var for offense team, then calls their choose play function, it can only output rush or pass.
+                    choice = var.get_offense().choosePlay(offense, defense) 
+                    #Checks var for offense team, then calls their choose play function, it can only output rush or pass.
                     if choice == ['rush_attempt']:
                         play = RushPlay() 
                     elif choice == ['pass_attempt']:
@@ -104,6 +105,7 @@ def playGame(homeTeam, awayTeam):
             elif var.get_position()+result['yards'] >= endZone: #Did a touchdown occur?
                 var.set_field_goal(True) #next play should be a field goal
                 var.set_position(84)
+                var.add_Score(6)
                 var.add_clock(result['timeElapsed'])
                 var.add_touchdown()
                 play.set_name('touchdown')
@@ -136,7 +138,7 @@ def playGame(homeTeam, awayTeam):
                 var.add_position(result['yards']) #Update positon
                 var.add_clock(result['timeElapsed']) #Update clock
             x +=1
-            #print(f'Play {x} {play.get_name():>21}:: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
+            print(f'Play {x} {play.get_name():>21}:: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
             #Set the game results from that play after its results have been applied to the current game variables
             play.set_game_results(var.get_homeScore(), var.get_awayScore(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter(), 0, play.isPenalty(), var.get_field_goal(), play.get_success(), var.get_switch_sides())
             #game has a parameters playList that has a list of the game result dictionary of each play, this appends the game result dictionary to that list

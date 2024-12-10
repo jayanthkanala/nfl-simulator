@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import nfl_data_py as nfl
-from random import random
+import random
 from scipy.stats import skew
 from scipy.stats import skewnorm
 
