@@ -24,6 +24,8 @@ class Play:
         self._gameResult = {
             'Home Score': 0,
             'Away Score': 0,
+            'Offense': '',
+            'Defense': '',
             'Position': 0,
             'Play Number': 0,
             'Play Name': '',
@@ -58,7 +60,7 @@ class Play:
             'yards': yards,
             'timeElapsed':timeElapsed}
 
-    def set_game_results(self, playNum,playName,homeScore, awayScore, yards, timeElapsed, down, quarter, currentPosition):
+    def set_game_results(self, playNum,playName,homeScore, awayScore, offense, defense, position, yards, timeElapsed, down, quarter):
         """
         Sets all values in the _gameResult dictionary.
         """
@@ -66,9 +68,11 @@ class Play:
         self._gameResult['Play Name'] = playName
         self._gameResult['Home Score'] = homeScore
         self._gameResult['Away Score'] = awayScore
-        self._gameResult['Position'] = currentPosition,
         self._gameResult['Yards'] = round(yards, 0)
         self._gameResult['Clock'] = round(timeElapsed, 1)
+        self._gameResult['Position'] = position
+        self._gameResult['Offense'] = offense
+        self._gameResult['Defense'] = defense
         self._gameResult['Down'] = down
         self._gameResult['Quarter'] = quarter
 

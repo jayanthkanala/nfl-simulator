@@ -140,7 +140,7 @@ def playGame(homeTeam, awayTeam):
             x +=1
             print(f'Play {x} {play.get_name():>21}:: Home: {var.get_homeScore()}, Away: {var.get_awayScore()}, Clock: {var.get_clock()}, Down: {var.get_down()}, Position: {var.get_position()}, Offense: {var.get_offense().get_name()}, Defense: {var.get_defense().get_name()}')
             #Set the game results from that play after its results have been applied to the current game variables
-            play.set_game_results(x, play.get_name(), var.get_homeScore(), var.get_awayScore(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter(), var.get_position())
+            play.set_game_results(x, play.get_name(), var.get_homeScore(), var.get_awayScore(),offense, defense,var.get_position(),result['yards'],result['timeElapsed'], var.get_down(), var.get_quarter())
             #game has a parameters playList that has a list of the game result dictionary of each play, this appends the game result dictionary to that list
             game.updatePlayList(play.get_game_results())
         #Increment quarter
@@ -166,6 +166,4 @@ def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10): #This will 
 
 
 
-
-
-
+runSimulation()
