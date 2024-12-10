@@ -143,7 +143,7 @@ class FieldGoal(Play):
                 total += 1
             else:
                 total += 1
-        fg_pct = count / total
+        fg_pct = (count / total) if total >0 else 0
         return fg_pct
 
     def makePlay(self, offense, currentPosition, touchdown = True):
