@@ -9,7 +9,6 @@ from scipy.stats import skewnorm
 
 pd.options.display.max_columns = None
 nfls = nfl.import_pbp_data([2023], downcast=True, cache=False, alt_path=None)
-print(nfls)
 team_dict = {}
 for team in nfls['home_team']:
     if team not in team_dict:

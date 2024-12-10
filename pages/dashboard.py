@@ -23,19 +23,19 @@ layout = html.Div([
     
     # Instructions
     html.Div([
-        html.P("Select two teams, a year, weather conditions, and the number of games to compare."),
+        html.P("Select two teams and the number of games for Simulation."),
     ], className='instructions'),
 
     # Team Selection
     html.Div([
-        html.Label('Select Team A:', className='label-class'),
+        html.Label('Select Home Team :', className='label-class'),
         dcc.Dropdown(
             options=[{'label': team, 'value': team} for team in td['team_name'].to_list()],
             value='',  # Default value
             id='home_team',
             className='dropdown-class',
         ),
-        html.Label('Select Team B:', className='label-class'),
+        html.Label('Select Away Team :', className='label-class'),
         dcc.Dropdown(
             options=[{'label': team, 'value': team} for team in td['team_name'].to_list()],
             value='',  # Default value
@@ -46,35 +46,35 @@ layout = html.Div([
       # Logos for selected teams
     html.Div(id='logos-container', className='logo-container'),
 
-    # Location Selection
-    html.Div([
-        html.Label('Select location for Team A:', className='label-class'),
-        dcc.Dropdown(['Home', 'Away'], '', id='team-a-loc', className='dropdown-class'),
-        html.Label('Select location for Team B:', className='label-class'),
-        dcc.Dropdown(['Home', 'Away'], '', id='team-b-loc', className='dropdown-class')
-    ], className='dropdown-container'),
+    # # Location Selection
+    # html.Div([
+    #     html.Label('Select location for Team A:', className='label-class'),
+    #     dcc.Dropdown(['Home', 'Away'], '', id='team-a-loc', className='dropdown-class'),
+    #     html.Label('Select location for Team B:', className='label-class'),
+    #     dcc.Dropdown(['Home', 'Away'], '', id='team-b-loc', className='dropdown-class')
+    # ], className='dropdown-container'),
 
-    # Year Selection
-    html.Div([
-        html.Label('Select Year:', className='label-class'),
-        dcc.Dropdown(
-            options=[{'label': str(year), 'value': str(year)} for year in year_range],
-            value='',  # Default value
-            id='year',
-            className='dropdown-class',
-        ),
-    ], className='dropdown-container'),
+    # # Year Selection
+    # html.Div([
+    #     html.Label('Select Year:', className='label-class'),
+    #     dcc.Dropdown(
+    #         options=[{'label': str(year), 'value': str(year)} for year in year_range],
+    #         value='',  # Default value
+    #         id='year',
+    #         className='dropdown-class',
+    #     ),
+    # ], className='dropdown-container'),
 
-    # Weather Selection
-    html.Div([
-        html.Label('Select Weather Conditions:', className='label-class'),
-        dcc.Dropdown(
-            options=[{'label': condition, 'value': condition} for condition in weather_conditions],
-            value='',  # Default value
-            id='weather',
-            className='dropdown-class',
-        ),
-    ], className='dropdown-container'),
+    # # Weather Selection
+    # html.Div([
+    #     html.Label('Select Weather Conditions:', className='label-class'),
+    #     dcc.Dropdown(
+    #         options=[{'label': condition, 'value': condition} for condition in weather_conditions],
+    #         value='',  # Default value
+    #         id='weather',
+    #         className='dropdown-class',
+    #     ),
+    # ], className='dropdown-container'),
 
     # Number of Games
     html.Div([
@@ -102,23 +102,24 @@ layout = html.Div([
     Input('submit-button', 'n_clicks'),
     State('home_team', 'value'),
     State('away_team', 'value'),
-    State('year', 'value'),
-    State('weather', 'value'),
+    # State('year', 'value'),
+    # State('weather', 'value'),
     State('num-games', 'value'),
-    State('team-a-loc', 'value'),
-    State('team-b-loc', 'value'),
+    # State('team-a-loc', 'value'),
+    # State('team-b-loc', 'value'),
 )
-def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_games, team_a_loc, team_b_loc):
+# def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_games, team_a_loc, team_b_loc):
+def save_inputs_and_redirect(n_clicks, home_team, away_team, num_games):
     if n_clicks > 0:
         # Validation
         if not home_team or not away_team:
             return {}, "Please select both Home Team and Away Team .", dash.no_update
-        if not team_a_loc or not team_b_loc:
-            return {}, "Please select locations for both Home Team and Away Team .", dash.no_update
-        if not year:
-            return {}, "Please select a year.", dash.no_update
-        if not weather:
-            return {}, "Please select weather conditions.", dash.no_update
+        # if not team_a_loc or not team_b_loc:
+        #     return {}, "Please select locations for both Home Team and Away Team .", dash.no_update
+        # if not year:
+        #     return {}, "Please select a year.", dash.no_update
+        # if not weather:
+        #     return {}, "Please select weather conditions.", dash.no_update
         if not num_games or int(num_games) <= 0:
             return {}, "Please enter a valid number of games (1-10).", dash.no_update
         
@@ -130,11 +131,11 @@ def save_inputs_and_redirect(n_clicks, home_team, away_team, year, weather, num_
         data = {
             'home_team': home_team,
             'away_team': away_team,
-            'year': year,
-            'weather': weather,
+            # 'year': year,
+            # 'weather': weather,
             'num_games': num_games,
-            'team_a_loc': team_a_loc,
-            'team_b_loc': team_b_loc,
+            # 'team_a_loc': team_a_loc,
+            # 'team_b_loc': team_b_loc,
             'homeTeam':team_a_abbr,
             'awayTeam':team_b_abbr
         }

@@ -9,8 +9,8 @@ def main(homeTeam, awayTeam):
     global endZone
     game = Game()
     #These will be input from the GUI Jayanth is making
-    homeTeam = Team('BUF')
-    awayTeam = Team('KC')
+    homeTeam = Team(homeTeam)
+    awayTeam = Team(awayTeam)
     #Coin Toss
     if random.uniform(0.00, 1.00) >= 0.50:
         var = GameVar(homeTeam, awayTeam)
@@ -145,10 +145,6 @@ def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10):
         games.append(c)
     return games, game_scores
 
-
-
-
-print(runSimulation()[1])
 
 
 
