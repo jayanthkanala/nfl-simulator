@@ -287,13 +287,13 @@ def simulate_loading(_):
 #     #     print(f"game: ",game)
         
 def display_game_results(data):
-    global total_games_dataFrame
+    global all_games_data
     if not data:
         return "No data provided. Please return to the dashboard to input your selections."
 
     total_games_data = getTotalGames(data)
     all_games_data = [pd.DataFrame(game) for game in total_games_data]
-    total_games_dataFrame = pd.concat(all_games_data, ignore_index=True)
+    # total_games_dataFrame = pd.concat(all_games_data, ignore_index=True)
 
     # Create dynamic cards with unique `id` using a dict
     results = [
@@ -317,24 +317,49 @@ def show_game_details(n_clicks_list):
     ctx = dash.callback_context
     if not ctx.triggered:
         return "Click on a game to view details."
-    # clicked_card_index=ctx.triggered[0]['prop_id'].split(".")['index']
-    # print(clicked_card_index)
-    # Find the index of the clicked game card
-    clicked_card_index = [
-        idx for idx, n_clicks in enumerate(n_clicks_list) if n_clicks
-    ]
-    if not clicked_card_index:
-        return "No game selected."
-    selected_game_index = clicked_card_index[0]
+    # clicked_card_index = [
+    #     idx for idx, n_clicks in enumerate(n_clicks_list) if n_clicks
+    # ]
+    # if not clicked_card_index:
+    #     return "No game selected."
+    # selected_game_index = clicked_card_index[-1]
+    # Find the index of the last clicked game card
+    # valid_clicks = [
+    #     (idx, clicks) for idx, clicks in enumerate(n_clicks_list) if clicks
+    # ]
+
+    # if not valid_clicks:
+    #     return "No game selected."
+
+    # # Extract the index of the last clicked card
+    # clicked_card_index = max(valid_clicks, key=lambda x: x[1])[0]
+    # print(f"Selected card index: {clicked_card_index}")
+    
+    # Debugging: Log the triggered context
+    print("Callback context triggered:", ctx.triggered)
+
+    # Extract the ID of the triggered component
+    triggered_id = ctx.triggered[0]['prop_id']
+
+    # Use regex or directly parse the ID to find the `index`
+    try:
+        # For `ALL`, the ID is typically a dictionary like {'type': 'game-card', 'index': X}
+        # Extract the `index` from the ID
+        triggered_id_dict = eval(triggered_id.split(".")[0])
+        clicked_card_index = triggered_id_dict["index"]
+    except (KeyError, SyntaxError) as e:
+        print(f"Error extracting index from triggered ID: {triggered_id}")
+        return "Error: Unable to determine the clicked game."
+
+    print(f"Selected card index: {clicked_card_index}")
 
     # Extract data for the selected game
-    selected_game_df = total_games_dataFrame.iloc[selected_game_index].to_frame().T #convering to df because it forms a series
+    selected_game_df = all_games_data[clicked_card_index] #convering to df because it forms a series
     # selected_game_df =total_games_data[clicked_card_index]
     print("selected_game_df: ",selected_game_df)
-
     # Return details as a DataTable
     return dash.dash_table.DataTable(
-        data=selected_game_df,
+        data=selected_game_df.to_dict('records'),
         columns=[{"name": col, "id": col} for col in selected_game_df],
         style_table={'overflowX': 'auto'},
         style_cell={'textAlign': 'left', 'padding': '5px'},
