@@ -161,5 +161,3 @@ def runSimulation(homeTeam = 'BUF', awayTeam = 'KC', numGames = 10): #This will 
         game_scores.append((a, b))
         games.append(c)
     return games, game_scores #Returns a list of game dataframes, and a list of tuples containing game scores
-
-runSimulation()
