@@ -1,5 +1,5 @@
 from GameVar import GameVar
-from Plays import Play, KickOff, FieldGoal, RushPlay, PassPlay, Punt
+from Plays import KickOff, FieldGoal, RushPlay, PassPlay, Punt
 from Game import Game
 from Team import Team
 import random

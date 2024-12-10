@@ -46,7 +46,7 @@ class GameVar:
         self._kickOff = True
         self._touchdowns = 0
 
-    # Getter and Setter for Teams
+    # Getter and Setter for variables
     def get_touchdowns(self):
         return self._touchdowns
 
@@ -65,7 +65,6 @@ class GameVar:
     def set_awayTeam(self, value):
         self._awayTeam = value
 
-    # Getter and Setter for scores
     def get_homeScore(self):
         return self._homeScore
 
