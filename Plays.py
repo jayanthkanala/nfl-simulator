@@ -22,17 +22,14 @@ class Play:
             'yards': 0,
             'timeElapsed':0}
         self._gameResult = {
-            'homeScore': 0,
-            'awayScore': 0,
-            'yards': 0,
-            'timeElapsed': 0,
-            'down': 1,
-            'quarter': 1,
-            'Probability': 0,
-            'penalty': False,
-            'TouchDown': False,
-            'FieldGoal': False,
-            'TurnOver': False,
+            'Play Number': 0,
+            'Play Name': '',
+            'Home Score': 0,
+            'Away Score': 0,
+            'Yards': 0,
+            'Clock': 0,
+            'Down': 1,
+            'Quarter': 1,
         }
 
     def convert_time_to_seconds(self, time):
@@ -60,21 +57,20 @@ class Play:
             'yards': yards,
             'timeElapsed':timeElapsed}
 
-    def set_game_results(self, homeScore, awayScore, yards, timeElapsed, down, quarter, Probability, penalty, TouchDown, FieldGoal, TurnOver):
+    def set_game_results(self, playNum,playName,homeScore, awayScore, yards, timeElapsed, down, quarter):
         """
         Sets all values in the _gameResult dictionary.
         """
-        self._gameResult['homeScore'] = homeScore
-        self._gameResult['awayScore'] = awayScore
-        self._gameResult['yards'] = yards
-        self._gameResult['timeElapsed'] = timeElapsed
-        self._gameResult['down'] = down
-        self._gameResult['quarter'] = quarter
-        self._gameResult['Probability'] = Probability
-        self._gameResult['penalty'] = penalty
-        self._gameResult['TouchDown'] = TouchDown
-        self._gameResult['FieldGoal'] = FieldGoal
-        self._gameResult['TurnOver'] = TurnOver
+        self._gameResult['Play Number'] = playNum
+        self._gameResult['Play Name'] = playName
+        self._gameResult['Home Score'] = homeScore
+        self._gameResult['Away Score'] = awayScore
+        self._gameResult['Yards'] = round(yards, 0)
+        self._gameResult['Clock'] = round(timeElapsed, 1)
+        self._gameResult['Down'] = down
+        self._gameResult['Quarter'] = quarter
+
+
 
     def get_game_results(self):
         return self._gameResult

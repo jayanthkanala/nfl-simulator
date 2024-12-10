@@ -212,7 +212,7 @@ layout = html.Div([
         children=[
 html.Div(
     children=[
-        html.H1("List of Games Compared"),
+        html.H1("Play by Play Simulation Results"),
         html.Div(
             children=[
                 html.Div(id='games-output', className='games-list'),  # Placeholder for game cards
