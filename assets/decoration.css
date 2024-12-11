@@ -1,0 +1,170 @@
+/* General Styles */
+body {
+    font-family: sans-serif;
+    background-color: rgb(95, 169, 198);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: rgb(251, 83, 83);
+    text-align: center;
+}
+
+.dropdown-container, .input-container, .submit-button-container {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    justify-content: center;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.centre-cl {
+    text-align: center;
+}
+
+.dropdown-class, .input-class {
+    width: 15em;
+}
+
+.label-class {
+    margin-right: 0.5em;
+}
+
+.submit-button {
+    padding: 15px 20px;
+    margin: 20px;
+    font-size: 1em;
+}
+
+.main-class {
+    padding: 5px;
+    margin: 5px;
+}
+
+.input-class {
+    width: 25%;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .dropdown-class, .input-class {
+        width: 100%;
+    }
+    .dropdown-container, .input-container, .submit-button-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px;
+    }
+    .submit-button {
+        width: 100%;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .dropdown-class, .input-class, .submit-button {
+        font-size: 0.9em;
+    }
+    .submit-button {
+        padding: 12px 15px;
+    }
+}
+.card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 20px; /* Spacing inside the card */
+    margin: 10px; /* Spacing outside the card */
+    max-width: 300px;
+    font-family: Arial, sans-serif; /* Font style */
+}
+
+/* Logo Container */
+.logo-container {
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-container img {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #fff;
+}
+
+html, body { 
+    height: 100%;
+    margin: 0;
+  }
+  
+  .box {
+    margin: 0 auto;
+    width: 40px;
+    height: 140px;
+    position: relative;
+  }
+  
+  .shadow {
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background-color: grey;
+    bottom: 0;
+    border-radius: 100%;
+    transform: scaleX(0.8);
+    opacity: 0.6;
+    animation: shadowScale 1s linear infinite;
+  }
+  
+  .gravity {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: 10px; /* Align with shadow */
+    animation: bounce 1s cubic-bezier(0.68, 0.35, 0.29, 0.54) infinite;
+  }
+  
+  .ball {
+    width: 40px;
+    height: 40px;
+    background-image: url('./soccer.webp');
+    background-size: cover;
+    border-radius: 50%; /* Ensure ball is circular */
+    animation: roll 0.7s linear infinite;
+  }
+  
+  @keyframes roll {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  @keyframes bounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-100px); } /* Move ball upwards */
+    100% { transform: translateY(0); }
+  }
+  
+  @keyframes shadowScale {
+    0% { transform: scaleX(0.8); opacity: 0.6; }
+    50% { transform: scaleX(1); opacity: 0.8; }
+    100% { transform: scaleX(0.8); opacity: 0.6; }
+  }
+.game-details{
+    background-color: #ffffff; /* White background */
+    border: 1px solid #e0e0e0; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 10px; /* Spacing inside the card */
+    margin: 5px; /* Spacing outside the card */
+    max-width: 90%;
+    font-family: Arial, sans-serif; /* Font style */
+}
