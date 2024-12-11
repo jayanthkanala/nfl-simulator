@@ -1,24 +1,23 @@
 # nfl-simulator
 <h1>Installations</h1>
-pip install dash dash_bootstrap_components
-pip install scipy
-pip install pandas
-pip install nfl-data-py
+pip install dash dash_bootstrap_components<br>
+pip install scipy<br>
+pip install pandas<br>
+pip install nfl-data-py<br>
 <h1>To run:</h1>
-python app.py
-open http://localhost:8050/ in browser
-input teams and number of games
-click 'Compare'
-Simulation can take up to 1 minute per game, 
-when all games are finished the results will appear on your screen
-navigate between games by clicking on their card on the left
-scroll to the bottom of the page to download a csv file
-
+python app.py<br>
+open http://localhost:8050/ in browser<br>
+input teams and number of games<br>
+click 'Compare'<br>
+Simulation can take up to 1 minute per game, <br>
+when all games are finished the results will appear on your screen<br>
+navigate between games by clicking on their card on the left<br>
+scroll to the bottom of the page to download a csv file<br>
 <h1>Issues Installing nfl-data-py</h1>
-nfl-data-py may throw an error on windows machines 
-when building wheel dependencies for fastparquet
-In this case, fastparquet can be manually installed first
-Once Git is installed on the machine:
-pip install cython
-pip install git+https://github.com/dask/fastparquet
-then retry nfl-py-data
+nfl-data-py may throw an error on windows machines <br>
+when building wheel dependencies for fastparquet<br>
+In this case, fastparquet can be manually installed first<br>
+Once Git is installed on the machine:<br>
+pip install cython<br>
+pip install git+https://github.com/dask/fastparquet<br>
+then retry nfl-py-data<br>
