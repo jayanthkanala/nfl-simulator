@@ -25,14 +25,17 @@ register_page(__name__, path="/games")
 layout = html.Div([
     dcc.Store(id='input-data-store', storage_type='session'),  # Store input data temporarily
     html.Div(
+        
         id="loading-animation",
         className="box",
         children=[
             html.Div(className="shadow"),
-            html.Div(className="gravity", children=[html.Div(className="ball")])
+            html.Div(className="gravity", children=[html.Div(className="ball")]),
+            html.H1("Now Running Simulation...Please Wait", style={"paddingTop": "200px", "fontSize": "30px"}),
         ],
-        style={"display": "block"}
+        style={"display": "block", 'marginTop': '40vh'}
     ),
+    
     html.Div(
         id="content-container",
         style={"display": "none"},
